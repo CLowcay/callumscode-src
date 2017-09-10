@@ -1,0 +1,35 @@
+<section .software-item ##{softwareUrl item}>
+  $if auth
+    <a .admin-buttons.button-control href=@{ProjectEditR (softwareUrl item)}>
+      Edit
+
+  <h3>
+    $if auth
+      $if softwareLive item
+        <input .liveness type=checkbox id=live-#{softwareUrl item} name=live checked data-url=@{ProjectLivenessR (softwareUrl item)}>
+      $else
+        <input .liveness type=checkbox id=live-#{softwareUrl item} name=live data-url=@{ProjectLivenessR (softwareUrl item)}>
+
+
+    $if auth
+      <label for=live-#{softwareUrl item}>
+        <a .title-link href=##{softwareUrl item}>#{softwareName item}
+    $else
+      <a .title-link href=##{softwareUrl item}>#{softwareName item}
+
+  <p .byline>Version #{softwareVersion item}
+  <p>
+    <a href=@{StaticR (StaticRoute (binRoute (softwareLink item)) [])}>Download
+    $maybe linkSrc <- softwareLinkSrc item
+      -
+      <a href=@{StaticR (StaticRoute (srcRoute linkSrc) [])}>Source code
+  $maybe linkScreenshot <- softwareScreenshot item
+    <p>
+      <img src=@{StaticR (StaticRoute (screenshotRoute linkScreenshot) [])} alt="Screenshot for #{softwareName item}">
+
+  $case markdownToHtml (softwareDescription item)
+    $of Left e
+      <p>Error formatting HTML: #{show e}
+    $of Right html
+      #{html}
+

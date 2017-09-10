@@ -1,0 +1,406 @@
+@import url('https://fonts.googleapis.com/css?family=Saira');
+
+@navFontHeight:14px;
+@buttonPaddingH:0.5em;
+
+@specialColor:#008000;
+@brightColor:#008B00;
+@dullColor:#004000;
+@highlightColor:#EEF;
+@errorColor:#C00;
+
+body {
+  padding-top:0.5em;
+	font-family:sans-serif;
+	background-image:url(@{StaticR img_background_png});
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family:'Saira', sans-serif;
+	margin-top:0.5em;
+	margin-bottom:0;
+	color:#{specialColor};
+}
+
+p {
+	margin-top:1rem;
+	margin-bottom:0;
+}
+
+.copy p {
+	text-indent:1em;
+	/*text-align:justify;
+  -webkit-hyphens:auto;
+  -ms-hyphens:auto;
+  hyphens:auto;*/
+}
+
+code {
+	background-color:#CCC;
+	font-family:monospace;
+	font-size:small;color:black;
+	white-space:pre;
+  position:relative;
+  display:inline-block;
+}
+
+pre {
+  margin:1rem 0 0 0;
+	font-family:monospace;
+  position:relative;
+	white-space:pre;
+
+  code {
+    display:block;
+  }
+}
+
+a {
+	cursor:pointer;
+	text-decoration:none;
+	color:#{specialColor};
+}
+
+a:hover {
+	text-decoration:underline;
+	color:#{brightColor};
+}
+
+a:visited {
+	color:#{dullColor};
+}
+
+.title-link,
+.title-link:hover,
+.title-link:visited
+{
+	color:#{specialColor};
+}
+
+.main-menu {
+  ul {
+    list-style:none;
+    margin:0.5em 0 0; padding:0;
+    width:14em;
+    display:block;
+  }
+
+  li {
+    width:50%;
+  }
+
+  li > a {
+    text-align:center;
+  }
+}
+
+@media only screen and (min-width:332px) {
+  .main-menu {
+    ul {
+      width:unset;
+    }
+
+    li {
+      width:unset;
+    }
+
+    li > a {
+      text-align:unset;
+    }
+  }
+}
+
+@media only screen and (min-width:572px) {
+	.main-menu ul {
+		margin:0; padding:0;
+		display:inline-block;
+		position:relative;
+		left:1.25em;
+	}
+}
+
+.main-menu img {
+	vertical-align:bottom;
+}
+
+.main-menu li {
+	margin:0; padding:0;
+	display:inline-block;
+
+	a {
+		-moz-user-select:none;
+		-webkit-user-select:none;
+		-ms-user-select:none;
+		user-select:none;
+
+		display:inline-block;
+		position:relative;
+
+		width:100%;height:100%;
+		padding:0 #{buttonPaddingH};
+
+		box-sizing:border-box;
+		border:1px solid #8a8a8a;
+		background:linear-gradient(to bottom, #00c200, #007d00);
+		text-decoration:none;
+		outline-style:none;
+		color:white;
+		font-weight:bold;
+		font-family:'Saira', sans-serif;
+		z-index:100;
+		transition:color 0.2s, text-shadow 0.2s;
+		font-size:#{navFontHeight};
+	}
+
+	a:before {
+		content:'';
+		display:block;
+		position:absolute;
+		left:0; top:0;
+		width:100%; height:100%;
+		opacity:0;
+		transition:opacity 0.2s;
+		background:linear-gradient(to top, #00c200, #007d00);
+		z-index:-100;
+	}
+
+	a:hover {
+		color:#0064ff;
+		text-shadow:white -1px 0 2px, white 0 1px 2px, white 1px 0 2px, white 0 1px 2px;
+	}
+
+	a:active:before {
+		opacity:1;
+	}
+}
+
+.byline {
+	font-size:x-small;
+  margin-top:-0.4em;
+}
+
+@contentRadius:0.5em;
+@contentMaxWidth:40em;
+@sidebarMaxWidth:16em;
+@totalColumnWidth:56em;
+
+body {
+	margin:0 auto;
+  width:100%;
+  max-width:#{contentMaxWidth};
+}
+
+.content {
+  position:relative;
+	box-sizing:border-box;
+	padding:1px 1.5em 2em 1.5em;
+	width:100%;
+	max-width:#{contentMaxWidth};
+}
+
+.sidebar {
+  border-top:1px solid black;
+  box-sizing:border-box;
+  padding:1px 1.5em 2em 1.5em;
+  width:100%;
+  max-width:#{contentMaxWidth};
+
+  ul {
+    list-style:none;
+    display:block;
+    padding:0;
+  }
+
+  li {
+    margin-top:0.5em;
+    display:block;
+  }
+}
+
+.col-wrapper {
+  width:100%;
+	margin:0.5em 0 0 0;
+  background-color:white;
+  max-width:#{contentMaxWidth};
+  border-radius:#{contentRadius};
+}
+
+footer {
+	font-family:'Saira', sans-serif;
+  background-color:white;
+  margin-top:0.5em;
+  margin-bottom:3em;
+  padding:1em 1.5em;
+  font-size:small;
+
+  span {
+    margin:0;
+    display:block;
+    width:100%;
+  }
+
+  .left {
+    position:relative;
+  }
+
+  .right {
+    position:absolute;bottom:0;left:0;
+    text-align:right;
+  }
+
+  border-radius:#{contentRadius};
+}
+
+@media only screen and (min-width:57em) {
+  body {
+    max-width:#{totalColumnWidth};
+  }
+
+  .col-wrapper {
+    max-width:#{totalColumnWidth};
+  }
+
+  .content {
+    float:left;
+    border-right:1px solid black;
+  }
+
+  .sidebar {
+    position:relative;
+    left:-1px;
+    border-top:none;
+    border-left:1px solid black;
+    float:right;
+    width:#{sidebarMaxWidth};
+  }
+
+  .col-wrapper::after {
+    visibility:hidden;
+    content:" ";
+    display:block;
+    height:0;
+    clear:both;
+  }
+
+  footer .right {
+    text-align:center;
+  }
+}
+
+.admin-buttons {
+  position:absolute;
+  right:0;top:0;
+}
+
+.button-control,
+.button-control:visited,
+.button-control:hover,
+.button-control:active {
+  cursor:pointer;
+  padding:0.2rem 1rem;
+  border:1px solid #8a8a8a;
+  background:linear-gradient(to bottom, #00c200, #007d00);
+  text-decoration:none;
+  outline-style:none;
+  color:white;
+  font-family:'Saira', sans-serif;
+  font-weight:normal;
+  font-size:#{navFontHeight};
+}
+
+.button-control:disabled {
+  color:black;
+  background: #8a8a8a;
+}
+
+.language-select {
+  visibility:hidden;
+  opacity:0;
+  transition: opacity 0.5s, visibility 0.5s;
+  position:absolute;
+  right:0;top:0;
+}
+
+.software-item {
+  position:relative;
+  margin-top:1em;
+  border-radius:0.25em 0 0 0;
+  padding-left:1em;
+  border-top:1px solid black;
+  border-left:1px solid black;
+
+  img {
+    max-width:100%;
+  }
+}
+
+form {
+  width:100%;
+  display:table;
+
+  border: 1px solid black;
+  border-radius: 0.2em;
+  padding: 0.5em;
+  box-sizing: border-box;
+  margin-top: 1em;
+  background-color:#{highlightColor};
+
+  div {
+    display:table-row;
+
+    label, .form-spacer {
+      width:1%;
+      white-space:nowrap;
+      vertical-align:top;
+      padding:0.4em 1em 0.4em 0;
+      display:table-cell;
+    }
+
+    input,select,textarea,button {
+      margin-top:0.4em;
+      vertical-align:top;
+      display:table-cell;
+    }
+
+    textarea {
+      box-sizing:border-box;
+      width:100%;
+      height:10em;
+    }
+  }
+
+  .optional>label::after {
+    content: "(optional)";
+    display: block;
+    clear: both;
+    font-size: small;
+  }
+
+  .errors {
+    color:#{errorColor};
+    font-size:small;
+    display:block;
+  }
+
+  .errors::before {
+    content:"(";
+  }
+  .errors::after {
+    content:")";
+  }
+}
+
+.message-success {
+  padding:0.5em;
+  border:1px solid #008B00;
+  border-radius:0.2em;
+  background-color:#b1ffb1;
+}
+
+.message-error {
+  padding:0.5em;
+  border:1px solid #8B0000;
+  border-radius:0.2em;
+  background-color:#ffb3b1;
+}
+

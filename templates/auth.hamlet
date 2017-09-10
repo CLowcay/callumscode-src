@@ -1,0 +1,7 @@
+<section .content>
+  <h1>Admin login
+  <p>If you're not the site administrator, you shouldn't be here.
+
+  $forall plugin <- plugins
+    <p>^{apLogin plugin rtp}
+

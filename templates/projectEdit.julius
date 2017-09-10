@@ -1,0 +1,37 @@
+function fileUploadOptions(type) {
+  return {
+    dataType: 'json',
+    done: function (e, data) {
+      $.each(data.result.files, function (index, file) {
+        $('#' + type + '-files')
+          .prepend('<option value="' + file.name +
+            '" data-url="' + file.deleteUrl + '">' + file.name + '</option>');
+        $('#' + type + '-field')
+          .prepend('<option value="' + file.name + '">' + file.name + '</option>')
+          .val(file.name);
+      });
+    }
+  };
+}
+
+onReady.push(function() {
+  $('#bin-file').fileupload(fileUploadOptions("bin"));
+  $('#src-file').fileupload(fileUploadOptions("src"));
+  $('#screenshot-file').fileupload(fileUploadOptions("screenshot"));
+
+  $('#delete-button').click(function (event) {
+    $('#all-files').find(':selected').each(function () {
+      const name = $(this).attr('value');
+      const url = $(this).attr('data-url');
+      $.ajax(url, {
+        method: "DELETE",
+        success: function(data, stat, jqXHR) {
+          for (const file of data.files) {
+            if (file[name]) $('option[value="' + name + '"]').remove();
+          }
+        }
+      });
+    });
+  });
+});
+

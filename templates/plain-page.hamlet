@@ -1,0 +1,12 @@
+<section .content>
+  <div #post>
+    #{content}
+
+  $if auth
+    $if editMode
+      ^{editorWidget mPermalink False}
+    $else
+      $maybe permalink <- mPermalink
+        <a .admin-buttons.button-control href=@{permalink}?edit>
+          Edit
+

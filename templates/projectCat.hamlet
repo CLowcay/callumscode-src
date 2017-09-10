@@ -1,0 +1,6 @@
+<section>
+  <h2>#{catName}
+  <p>#{catDescription}
+  $forall item <- catData
+    ^{projectSummary auth item}
+

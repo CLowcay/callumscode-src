@@ -1,0 +1,44 @@
+<section .content>
+  $if auth
+    <a .admin-buttons.button-control href=@{ProjectNewR}>New...
+
+  <h1>Software download page
+
+  <p>
+    This page is where the very small number of hobby projects of mine that
+    have reached any stage of completion are left to languish.  Most of the
+    work on this page is very old and of no relevance to today's computing
+    culture.
+
+  <p>
+    When I first got into programming, native desktop application development
+    was where I wanted to be, hence the lack of fashionable mobile and web apps
+    on this page.  Sadly, the web took over and now we have to write everything
+    in javascript.
+
+  ^{categoryProjects auth "Haskell" haskellDescription (catHaskell projects)}
+  ^{categoryProjects auth "XBlite" xbliteDescription (catXBlite projects)}
+  ^{categoryProjects auth "Liberty Basic" lbDescription (catLibertyBasic projects)}
+
+<section .sidebar>
+  <div #sticky-menu>
+    <h1>Contents
+
+    <h2>Haskell
+    <ul>
+      $forall item <- catHaskell projects
+        <li>
+          <a .title-link href=##{softwareUrl item}>#{softwareName item}
+
+    <h2>XBlite
+    <ul>
+      $forall item <- catXBlite projects
+        <li>
+          <a .title-link href=##{softwareUrl item}>#{softwareName item}
+
+    <h2>Liberty Basic
+    <ul>
+      $forall item <- catLibertyBasic projects
+        <li>
+          <a .title-link href=##{softwareUrl item}>#{softwareName item}
+

@@ -1,0 +1,44 @@
+<section .content>
+  <h1>Edit project information
+  <form method=post action=@{action} enctype=#{enctype}>
+    ^{widget}
+    <div>
+      <span .form-spacer>
+      <button type=submit>Submit
+
+<section .sidebar>
+  <h1>Files
+
+  <div>
+    <label for='all-files'>Uploaded files:
+
+  <div>
+    <select #all-files name="all-files" size="16" multiple>
+      <optgroup #bin-files label="/bin">
+        $forall file <- binFiles
+          <option value=#{file} data-url=@{UploadFileR UploadBin (pack file)}>
+            #{file}
+      <optgroup #src-files label="/src">
+        $forall file <- srcFiles
+          <option value=#{file} data-url=@{UploadFileR UploadSrc (pack file)}>
+            #{file}
+      <optgroup #screenshot-files label="img/screenshot">
+        $forall file <- screenshotFiles
+          <option value=#{file} data-url=@{UploadFileR UploadScreenshot (pack file)}>
+            #{file}
+
+  <div>
+    <button #delete-button>Delete selected
+
+  <p>
+    <label for=bin-file>Upload bin file
+    <input type=file accept=application/zip,application/x-msdownload #bin-file name=file data-url=@{UploadR UploadBin}>
+  <p>
+    <label for=src-file>Upload src file
+    <input type=file accept=application/zip #src-file name=file data-url=@{UploadR UploadSrc}>
+  <p>
+    <label for=screenshot-file>Upload screenshot
+    <input type=file accept=image/* #screenshot-file name=file data-url=@{UploadR UploadScreenshot}>
+
+  <p>&nbsp;
+

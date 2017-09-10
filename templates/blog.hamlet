@@ -1,0 +1,57 @@
+<article .content>
+  <header>
+    <h1 #title>
+      $if editMode
+        #{title}
+      $else
+        $maybe permalink <- mPermalink
+          <a .title-link href=@{permalink}>
+            #{title}
+        $nothing
+          #{title}
+
+    $maybe (created, updated) <- mtime
+      <p .byline>
+        Posted:&nbsp;#
+        \<time datetime="#{machineTime created}">
+          #{humanTime created}</time>
+        , Updated:&nbsp;#
+        \<time datetime="#{machineTime updated}">
+          #{humanTime updated}</time>
+
+  <div #post .copy>
+    #{content}
+
+  $if auth
+    $if editMode
+      ^{editorWidget mPermalink isNewPage}
+    $else
+      $maybe permalink <- mPermalink
+        <a .admin-buttons.button-control href=@{permalink}?edit>
+          Edit
+
+<section .sidebar>
+  <h2>Previously
+
+  $if auth
+    <a #new href=@{BlogNewR}>New...
+
+  $if null morePosts
+    <p>none...
+  $else
+    <ul>
+      $forall post <- morePosts
+        <li>
+          $if auth
+            $if blogPostDeleted post
+              <input .liveness type=checkbox id=live-#{blogPostUrl post} name=live data-url=@{BlogLivenessR (blogPostYear post) (blogPostMonth post) (blogPostUrl post)}>
+            $else
+              <input .liveness type=checkbox id=live-#{blogPostUrl post} name=live checked data-url=@{BlogLivenessR (blogPostYear post) (blogPostMonth post) (blogPostUrl post)}>
+
+          $if auth
+            <label for=live-#{blogPostUrl post}>
+              <a href="@{BlogR (blogPostYear post) (blogPostMonth post) (blogPostUrl post)}">#{blogPostTitle post}
+
+          $else
+            <a href="@{BlogR (blogPostYear post) (blogPostMonth post) (blogPostUrl post)}">#{blogPostTitle post}
+

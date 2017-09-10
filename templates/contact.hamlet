@@ -1,0 +1,16 @@
+<section .content>
+  <h1>Contact form
+  <p>
+    I long ago disabled comments on my website.  If you have questions or
+    comments for me, then you can fill out this form.
+
+  $forall (status, message) <- messages
+    <p class=#{status}>
+      #{message}
+
+  <form method=post action=@{ContactR} enctype=#{enctype}>
+    ^{widget}
+    <div>
+      <span .form-spacer>
+      <button type=submit>Submit
+

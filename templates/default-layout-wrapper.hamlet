@@ -1,0 +1,44 @@
+$newline never
+\<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>#{pageTitle pc}
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="HandheldFriendly" content="true">
+
+    ^{pageHead pc}
+
+    <script>
+      const onReady = [];
+      document.onreadystatechange = () => {
+        if (document.readyState === 'complete') {
+          for (f of onReady) f();
+        }
+      };
+    <script>
+      document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/,'js');
+  <body>
+    $maybe _ <- mauthId
+      <a .admin-buttons.button-control href=@{AuthR LogoutR}>Logout
+    <header>
+      <nav .main-menu>
+        <a href="@{HomeR}" alt="home">
+          <picture>
+            <source media="(min-width:572px)" srcset="@{StaticR img_cc_new_png}">
+            <img src=@{StaticR img_cc_reduced_png} alt="home">
+        <ul>
+          <li>
+            <a href=@{HomeR} draggable=false>BLOG
+          <li>
+            <a href=@{OldProjectsR} draggable=false>SOFTWARE
+          <li>
+            <a href=@{ContactR} draggable=false>CONTACT
+          <li>
+            <a href=@{AboutR} draggable=false>ABOUT
+    ^{pageBody pc}
+

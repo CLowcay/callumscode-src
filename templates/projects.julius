@@ -1,0 +1,41 @@
+function getDocumentPos(element) {
+  const r = element.getBoundingClientRect();
+  return {
+    x: r.left + window.pageXOffset,
+    y: r.top + window.pageYOffset
+  };
+}
+
+function getWindowPos(element) {
+  const r = element.getBoundingClientRect();
+  return { x: r.left, y: r.top, w: r.width, h: r.height };
+}
+
+let isSticky = false;
+const stickyTopMargin = 0;
+const bottomAllowance = 128;
+
+
+function updateStickyMenu() {
+  const spos = getWindowPos(document.querySelector('.sidebar'));
+  const stickyMenu = document.getElementById('sticky-menu');
+  const stickyPos = getWindowPos(stickyMenu);
+
+  if (spos.y > stickyTopMargin) {
+    if (isSticky) {
+      stickyMenu.style.position = 'static';
+      isSticky = false;
+    }
+  } else if ((!isSticky) && (stickyPos.y < stickyTopMargin) &&
+    (window.innerHeight > (stickyPos.h + bottomAllowance))
+  ) {
+    stickyMenu.style.position = 'fixed';
+    stickyMenu.style.top = stickyTopMargin + 'px';
+    stickyMenu.style.left = stickyPos.x
+    isSticky = true;
+  }
+}
+
+window.addEventListener('scroll', updateStickyMenu);
+window.addEventListener('resize', updateStickyMenu);
+

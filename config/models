@@ -1,0 +1,32 @@
+BlogPost
+  deleted Bool
+  title Text
+  content Html
+  year Year
+  month Month
+  url Text
+  timeCreated UTCTime
+  timeUpdated UTCTime
+  UniqueBlogPost year month url
+
+Software
+  url Text
+  live Bool
+  name Text
+  version Text
+  cat SoftwareCategory
+  lastUpdate UTCTime
+  link String
+  linkSrc String Maybe
+  screenshot String Maybe
+  description Markdown
+  UniqueSoftware url
+
+PlainPage
+  name Text
+  content Html
+  timeUpdated UTCTime
+  UniquePlainPage name
+
+ -- By default this file is used in Model.hs (which is imported by Foundation.hs)
+

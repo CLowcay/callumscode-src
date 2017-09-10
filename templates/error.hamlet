@@ -1,0 +1,21 @@
+<section .content>
+  $case errorResponse
+    $of NotFound
+      <h1>Not found
+      <p>Whatever you were looking for, it's not here.  Sorry about that.
+    $of InternalError _
+      <h1>Internal server error
+      <p>Looks like my server is misconfigured.  Sorry about that.
+    $of InvalidArgs args
+      <h1>Invalid arguments
+      <p>#{formatArgs args}
+    $of NotAuthenticated
+      <h1>Not authenticated
+      <p>You shouldn't be here.
+    $of PermissionDenied _
+      <h1>Access denied
+      <p>You shouldn't be here.
+    $of BadMethod method
+      <h1>Method not allowed
+      <p>You cannot #{show method} this resource.
+

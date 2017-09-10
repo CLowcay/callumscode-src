@@ -1,0 +1,27 @@
+/static StaticR Static appStatic
+
+/favicon.ico FaviconR GET
+/robots.txt RobotsR GET
+
+/ HomeR GET
+
+/blog/#Int64 BlogOldR GET
+/blog/post/new BlogNewR GET POST
+/blog/#Year/#Month/#Text BlogR GET POST
+/blog/#Year/#Month/#Text/liveness BlogLivenessR POST
+
+/projects ProjectsR GET
+/old_projects OldProjectsR GET
+/projects/#Text ProjectEditR GET POST
+/projects/#Text/liveness ProjectLivenessR POST
+/new_project ProjectNewR GET POST
+
+/contact ContactR GET POST
+/about AboutR GET POST
+/privacy PrivacyR GET POST
+
+/file/#UploadTarget UploadR POST
+/file/#UploadTarget/#Text UploadFileR GET DELETE
+
+/auth AuthR Auth getAuth
+

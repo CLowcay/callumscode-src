@@ -1,0 +1,10 @@
+<!-- Page Contents -->
+<div .col-wrapper>
+  ^{widget}
+
+<!-- Footer -->
+<footer>
+  <span .left>© Callum Lowcay
+    <span .right>
+      <a href=@{PrivacyR}>Privacy policy
+
