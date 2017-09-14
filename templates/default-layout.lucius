@@ -140,7 +140,7 @@ a:visited {
 		padding:0 #{buttonPaddingH};
 
 		box-sizing:border-box;
-		border:1px solid #8a8a8a;
+		border:1px solid #019e00;
 		background:linear-gradient(to bottom, #00c200, #007d00);
 		text-decoration:none;
 		outline-style:none;
