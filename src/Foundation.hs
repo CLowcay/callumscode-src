@@ -13,6 +13,7 @@ import qualified Yesod.Auth.Message as YAM
 import qualified Yesod.Core.Unsafe as Unsafe
 import Text.Hamlet          (hamletFile)
 import Text.Jasmine         (minifym)
+import Yesod.Auth.Dummy
 import Yesod.Auth.GoogleEmail2
 import Yesod.Core.Types     (Logger)
 import Yesod.Default.Util   (addStaticContentExternal)
@@ -119,6 +120,9 @@ instance Yesod App where
   makeLogger = return . appLogger
 
   authRoute _ = Just $ AuthR LoginR
+
+  isAuthorized (FaviconR) False = return Authorized
+  isAuthorized (RobotsR) False = return Authorized
   isAuthorized (HomeR) False = return Authorized
   isAuthorized (BlogOldR _) False = return Authorized
   isAuthorized (BlogR _ _ _) False = return Authorized
@@ -158,9 +162,13 @@ instance YesodAuth App where
   getAuthId = return . Just . credsIdent
   loginDest _ = HomeR
   logoutDest _ = HomeR
-  authPlugins master = [authGoogleEmail clientId clientSecret]
+  authPlugins master = [authGoogleEmail clientId clientSecret] <> dummy
     where clientId = googleClientId$ appSettings master
           clientSecret = googleClientSecret$ appSettings master
+          dummy =
+            if appAuthDummyLogin$ appSettings master
+            then [authDummy] else []
+
   authHttpManager = appHttpManager
   maybeAuthId = lookupSession "_ID"
   loginHandler = do

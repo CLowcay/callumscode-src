@@ -298,7 +298,7 @@ footer {
 .button-control:active {
   cursor:pointer;
   padding:0.2rem 1rem;
-  border:1px solid #8a8a8a;
+  border:1px solid #019e00;
   background:linear-gradient(to bottom, #00c200, #007d00);
   text-decoration:none;
   outline-style:none;
@@ -336,8 +336,6 @@ footer {
 
 form {
   width:100%;
-  display:table;
-
   border: 1px solid black;
   border-radius: 0.2em;
   padding: 0.5em;
@@ -346,8 +344,6 @@ form {
   background-color:#{highlightColor};
 
   div {
-    display:table-row;
-
     label, .form-spacer {
       width:1%;
       white-space:nowrap;
@@ -387,6 +383,36 @@ form {
   }
   .errors::after {
     content:")";
+  }
+}
+
+@media only screen and (min-width:30em) {
+  form {
+    display:table;
+
+    div {
+      display:table-row;
+
+      label, .form-spacer {
+        width:1%;
+        white-space:nowrap;
+        vertical-align:top;
+        padding:0.4em 1em 0.4em 0;
+        display:table-cell;
+      }
+
+      input,select,textarea,button {
+        margin-top:0.4em;
+        vertical-align:top;
+        display:table-cell;
+      }
+
+      textarea {
+        box-sizing:border-box;
+        width:100%;
+        height:10em;
+      }
+    }
   }
 }
 
