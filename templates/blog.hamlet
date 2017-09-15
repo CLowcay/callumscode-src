@@ -15,9 +15,10 @@
         Posted:&nbsp;#
         \<time datetime="#{machineTime created}">
           #{humanTime created}</time>
-        , Updated:&nbsp;#
-        \<time datetime="#{machineTime updated}">
-          #{humanTime updated}</time>
+        $if created /= updated
+          , Updated:&nbsp;#
+          \<time datetime="#{machineTime updated}">
+            #{humanTime updated}</time>
 
   <div #post .copy>
     #{content}
