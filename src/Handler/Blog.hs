@@ -89,8 +89,16 @@ postBlogR year month name = do
 postBlogLivenessR :: Year -> Month -> Text -> Handler Value
 postBlogLivenessR year month name = do
   live <- runInputPost$ ireq checkBoxField "live"
-  Entity blogId _ <- runDB.getBy404$ UniqueBlogPost year month name
-  runDB$ update blogId [BlogPostDeleted =. (not live)]
+  Entity blogId blog <- runDB.getBy404$ UniqueBlogPost year month name
+
+  now <- liftIO$ getCurrentTime
+  let publish = if blogPostUnpublished blog && live
+                then [BlogPostUnpublished =. False,
+                      BlogPostTimeCreated =. now,
+                      BlogPostTimeUpdated =. now]
+                else []
+
+  runDB$ update blogId ([BlogPostDeleted =. (not live)] ++ publish)
   return$ object ["live" .= live]
 
 getBlogNewR :: Handler Html
@@ -120,6 +128,7 @@ postBlogNewR = do
       simple <- runInputPost blogForm
       let url = mkURL$ simpleBlogTitle simple
       _ <- runDB.insert$ BlogPost {
+        blogPostUnpublished = True,
         blogPostDeleted = True,
         blogPostTitle = simpleBlogTitle simple,
         blogPostContent = simpleBlogContent simple,

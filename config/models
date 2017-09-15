@@ -1,4 +1,5 @@
 BlogPost
+  unpublished Bool default=0
   deleted Bool
   title Text
   content Html
