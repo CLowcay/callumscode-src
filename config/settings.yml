@@ -23,6 +23,8 @@ approot:        "_env:APPROOT"
 # NB: If you need a numeric value (e.g. 123) to parse as a String, wrap it in single quotes (e.g. "_env:PGPASS:'123'")
 # See https://github.com/yesodweb/yesod/wiki/Configuration#parsing-numeric-values-as-strings
 
+databaseRoot: "_env:SQLITE_ROOT:./"
+
 database:
   # See config/test-settings.yml for an override during tests
   database: "_env:SQLITE_DATABASE:callumscode2.sqlite3"
@@ -41,4 +43,8 @@ adminEmail: "_env:ADMIN_EMAIL:"
 awsKey: "_env:AWS_KEY:"
 awsSecret: "_env:AWS_SECRET:"
 awsSESRegion: "_env:AWS_SES_REGION:"
+
+uploadScreenshot: "_env:UPLOAD_SCREENSHOT:static/img/screenshots"
+uploadBin: "_env:UPLOAD_BIN:static/bin"
+uploadSrc: "_env:UPLOAD_SRC:static/src"
 

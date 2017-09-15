@@ -29,6 +29,7 @@ import Yesod.Default.Util          (WidgetFileSettings, widgetFileNoReload,
 data AppSettings = AppSettings
     { appStaticDir              :: String
     -- ^ Directory from which to serve static files.
+    , appDatabaseRoot           :: Text
     , appDatabaseConf           :: SqliteConf
     -- ^ Configuration settings for accessing the database.
     , appRoot                   :: Maybe Text
@@ -69,6 +70,10 @@ data AppSettings = AppSettings
     , awsKey                    :: Text
     , awsSecret                 :: Text
     , awsSESRegion              :: Text
+
+    , uploadScreenshot          :: Text
+    , uploadBin                 :: Text
+    , uploadSrc                 :: Text
     }
 
 instance FromJSON AppSettings where
@@ -80,6 +85,7 @@ instance FromJSON AppSettings where
                      False
 #endif
     appStaticDir              <- o .: "static-dir"
+    appDatabaseRoot           <- o .: "databaseRoot"
     appDatabaseConf           <- o .: "database"
     appRoot                   <- o .:? "approot"
     appHost                   <- fromString <$> o .: "host"
@@ -106,34 +112,11 @@ instance FromJSON AppSettings where
     awsSecret                 <- o .:  "awsSecret"
     awsSESRegion              <- o .:  "awsSESRegion"
 
+    uploadScreenshot          <- o .:  "uploadScreenshot"
+    uploadBin                 <- o .:  "uploadBin"
+    uploadSrc                 <- o .:  "uploadSrc"
+
     return AppSettings {..}
-
-screenshotDir :: FilePath
-screenshotDir = "static" </> "img" </> "screenshot" 
-
-binDir :: FilePath
-binDir = "static" </> "bin"
-
-srcDir :: FilePath
-srcDir = "static" </> "src"
-
-screenshotFile :: String -> FilePath
-screenshotFile name = screenshotDir </> name
-
-binFile :: String -> FilePath
-binFile name = binDir </> name
-
-srcFile :: String -> FilePath
-srcFile name = srcDir </> name
-
-screenshotRoute :: String -> [Text]
-screenshotRoute name = fmap pack ["img", "screenshot", name]
-
-binRoute :: String -> [Text]
-binRoute name = fmap pack ["bin", name]
-
-srcRoute :: String -> [Text]
-srcRoute name = fmap pack ["src", name]
 
 -- | Settings for 'widgetFile', such as which template languages to support and
 -- default Hamlet settings.
