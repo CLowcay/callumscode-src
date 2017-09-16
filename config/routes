@@ -10,6 +10,8 @@
 /blog/#Year/#Month/#Text BlogR GET POST
 /blog/#Year/#Month/#Text/liveness BlogLivenessR POST
 
+/rss FeedR GET
+
 /projects ProjectsR GET
 /old_projects OldProjectsR GET
 /projects/#Text ProjectEditR GET POST

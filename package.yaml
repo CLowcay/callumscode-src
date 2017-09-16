@@ -48,6 +48,7 @@ dependencies:
 - yesod-markdown
 - mime-mail
 - mime-mail-ses
+- yesod-newsfeed >= 1.6 && < 1.7
 
 # The library contains all of our application code. The executable
 # defined below is just a thin wrapper.

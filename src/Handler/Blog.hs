@@ -13,6 +13,7 @@ import Common
 import Database.Persist.Sql
 import Data.Time.Format
 import Widget.Editor
+import Yesod.AtomFeed
 
 data SimpleBlog = SimpleBlog {
   simpleBlogTitle :: Text,
@@ -35,11 +36,44 @@ machineTime = toHtml.fmap nbsp.formatTime defaultTimeLocale
 humanTime :: UTCTime -> Html
 humanTime = toHtml.fmap nbsp.formatTime defaultTimeLocale "%d %b %Y"
 
-getMorePosts :: Bool -> Handler [BlogPost]
-getMorePosts auth = (fmap.fmap) entityVal.runDB$
+getAllPosts :: Bool -> Handler [BlogPost]
+getAllPosts auth = (fmap.fmap) entityVal.runDB$
   selectList (liveFilter auth) [Desc BlogPostTimeCreated]
     where liveFilter True = []
           liveFilter False =  [BlogPostDeleted ==. False]
+
+feedEntry :: BlogPost -> FeedEntry (Route App)
+feedEntry post = FeedEntry {
+  feedEntryLink =
+    BlogR (blogPostYear post) (blogPostMonth post) (blogPostUrl post),
+  feedEntryUpdated = blogPostTimeUpdated post,
+  feedEntryTitle = blogPostTitle post,
+  feedEntryContent = blogPostContent post,
+  feedEntryEnclosure = Nothing
+}
+
+getFeedR :: Handler RepAtom
+getFeedR = do
+  posts <- getAllPosts False
+  let arbitraryDate = UTCTime (fromGregorian 1970 1 1) 0
+  let latest =  fromMaybe arbitraryDate
+                  .fmap blogPostTimeUpdated
+                  .fmap (maximumBy (comparing blogPostTimeCreated))
+                  .fromNullable$ posts
+  let entries = fmap feedEntry posts
+
+  atomFeed$ Feed {
+    feedTitle = "Callum's Code Blog",
+    feedLinkSelf = FeedR,
+    feedLinkHome = HomeR,
+    feedAuthor = "Callum Lowcay",
+    feedDescription = toHtml
+      ("<p>Typical programming blog, mostly short and technical</p>" :: Text),
+    feedLanguage = "en-nz",
+    feedUpdated = latest,
+    feedLogo = Nothing,
+    feedEntries = entries
+  }
 
 getBlogOldR :: Int64 -> Handler Html
 getBlogOldR blogId = do
@@ -51,10 +85,11 @@ getBlogR :: Year -> Month -> Text -> Handler Html
 getBlogR year month name = do
   auth <- (== Authorized) <$> isAdmin
   Entity _ blogPost <- runDB.getBy404$ UniqueBlogPost year month name
-  morePosts <- getMorePosts auth
+  morePosts <- getAllPosts auth
   editMode <- any (== "edit").fmap fst.reqGetParams <$> getRequest
   
   defaultLayout$ do
+    atomLink FeedR "RSS"
     addScript$ StaticR js_jquery_3_2_1_min_js
     addScript$ StaticR js_liveness_js
 
@@ -104,7 +139,7 @@ postBlogLivenessR year month name = do
 getBlogNewR :: Handler Html
 getBlogNewR = do
   auth <- (== Authorized) <$> isAdmin
-  morePosts <- getMorePosts auth
+  morePosts <- getAllPosts auth
 
   defaultLayout $ do
     addScript$ StaticR js_jquery_3_2_1_min_js
