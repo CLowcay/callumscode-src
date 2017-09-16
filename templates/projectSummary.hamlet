@@ -19,13 +19,13 @@
 
   <p .byline>Version #{softwareVersion item}
   <p>
-    <a href=@{StaticR (StaticRoute (binRoute (softwareLink item)) [])}>Download
+    <a href=@{UploadFileR UploadBin (pack (softwareLink item))}>Download
     $maybe linkSrc <- softwareLinkSrc item
       -
-      <a href=@{StaticR (StaticRoute (srcRoute linkSrc) [])}>Source code
+      <a href=@{UploadFileR UploadSrc (pack linkSrc)}>Source code
   $maybe linkScreenshot <- softwareScreenshot item
     <p>
-      <img src=@{StaticR (StaticRoute (screenshotRoute linkScreenshot) [])} alt="Screenshot for #{softwareName item}">
+      <img src=@{UploadFileR UploadScreenshot (pack linkScreenshot)} alt="Screenshot for #{softwareName item}">
 
   $case markdownToHtml (softwareDescription item)
     $of Left e

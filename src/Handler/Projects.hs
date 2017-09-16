@@ -39,9 +39,10 @@ dirField = (fmap$ selectFieldList.fmap option).liftIO.listDirectory
 -- The editing form
 softwareForm :: Maybe Software -> Form Software
 softwareForm mSoft html = do
-  linkField <- lift$ dirField binDir
-  linkSrcField <- lift$ dirField srcDir
-  screenshotField <- lift$ dirField screenshotDir
+  app <- getYesod
+  linkField <- lift.dirField.binDir$ app
+  linkSrcField <- lift.dirField.srcDir$ app
+  screenshotField <- lift.dirField.screenshotDir$ app
 
   let {
     form = renderDivs$ Software <$>
@@ -77,9 +78,10 @@ softwareForm mSoft html = do
 projectEditWidget ::
   Widget -> Enctype -> Maybe Software -> (Route App) -> Widget
 projectEditWidget widget enctype item action = do
-  binFiles <- liftIO$ listDirectory binDir
-  srcFiles <- liftIO$ listDirectory srcDir
-  screenshotFiles <- liftIO$ listDirectory screenshotDir
+  app <- getYesod
+  binFiles <- liftIO.listDirectory.binDir$ app
+  srcFiles <- liftIO.listDirectory.srcDir$ app
+  screenshotFiles <- liftIO.listDirectory.screenshotDir$ app
 
   addScript$ StaticR js_jquery_3_2_1_min_js
   addScript$ StaticR js_jquery_ui_widget_js

@@ -76,7 +76,8 @@ makeFoundation appSettings = do
 
     -- Create the database connection pool
     pool <- flip runLoggingT logFunc $ createSqlitePool
-        (sqlDatabase $ appDatabaseConf appSettings)
+        (pack$ (unpack.appDatabaseRoot$ appSettings) </>
+          (unpack.sqlDatabase.appDatabaseConf$ appSettings))
         (sqlPoolSize $ appDatabaseConf appSettings)
 
     -- Perform database migration using our application's logging settings.

@@ -14,12 +14,13 @@ import System.Directory
 
 postUploadR :: UploadTarget -> Handler Value
 postUploadR target = do
+  app <- getYesod
   info <- runInputPost$ ireq fileField "file"
   let filePath = unpack$ fileName info
   let name = case target of
-               UploadBin -> binFile filePath
-               UploadSrc -> srcFile filePath
-               UploadScreenshot -> screenshotFile filePath
+               UploadBin -> binFile app filePath
+               UploadSrc -> srcFile app filePath
+               UploadScreenshot -> screenshotFile app filePath
 
   exists <- liftIO$ doesFileExist name
   if exists then
@@ -44,18 +45,20 @@ postUploadR target = do
       ]]]
 
 getUploadFileR :: UploadTarget -> Text -> Handler Html
-getUploadFileR target filename =
+getUploadFileR target filename = do
+  app <- getYesod
   case target of
-    UploadBin -> sendFile typeOctet (binFile$ unpack filename)
-    UploadSrc -> sendFile typeOctet (srcFile$ unpack filename)
-    UploadScreenshot -> sendFile typeOctet (screenshotFile$ unpack filename)
+    UploadBin -> sendFile typeOctet (binFile app$ unpack filename)
+    UploadSrc -> sendFile typeOctet (srcFile app$ unpack filename)
+    UploadScreenshot -> sendFile typeOctet (screenshotFile app$ unpack filename)
 
 deleteUploadFileR :: UploadTarget -> Text -> Handler Value
 deleteUploadFileR target filename = do
+  app <- getYesod
   let filePath = case target of
-               UploadBin -> binFile (unpack filename)
-               UploadSrc -> srcFile (unpack filename)
-               UploadScreenshot -> screenshotFile (unpack filename)
+               UploadBin -> binFile app (unpack filename)
+               UploadSrc -> srcFile app (unpack filename)
+               UploadScreenshot -> screenshotFile app (unpack filename)
   liftIO$ removeFile filePath
   return$ object ["files" .= [object [filename .= True]]]
 
