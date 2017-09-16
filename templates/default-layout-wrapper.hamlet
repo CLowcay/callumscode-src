@@ -5,8 +5,8 @@ $newline never
     <meta charset="UTF-8">
 
     <title>#{pageTitle pc}
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Computer programming blog">
+    <meta name="author" content="Callum Lowcay">
 
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="HandheldFriendly" content="true">
