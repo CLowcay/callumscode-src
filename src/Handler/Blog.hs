@@ -12,6 +12,8 @@ import Import hiding (toLower)
 import Common
 import Database.Persist.Sql
 import Data.Time.Format
+import Text.Blaze.Html.Renderer.Text
+import Text.HTML.TagSoup
 import Widget.Editor
 import Yesod.AtomFeed
 
@@ -75,6 +77,31 @@ getFeedR = do
     feedEntries = entries
   }
 
+formatPreBlocks :: Html -> Html
+formatPreBlocks =
+  preEscapedToMarkup
+  . renderTags
+  . mconcat
+  . (fmap) removeBreaks
+  . findBlocks (~== ("<pre>" :: String)) (~== ("</pre>" :: String))
+  . parseTags . toStrict . renderHtml
+  where
+    removeBreaks [] = []
+    removeBreaks (t:tags) =
+      if t ~== ("<pre>" :: String)
+      then t:fmap removeBreaks' tags else (t:tags)
+    removeBreaks' :: Tag Text -> Tag Text
+    removeBreaks' tag =
+      if tag ~== ("<br>" :: String)
+      then TagText "\r\n" else tag
+    findBlocks open close ls = case break open ls of
+      (r, blk') -> case break close blk' of
+        (blk, []) -> r:[blk]
+        (blk, c:rs) -> r:(blk <> [c]) : findBlocks open close rs
+
+stripTags :: Text -> Text
+stripTags = renderTags . filter isTagText . parseTags
+
 getBlogOldR :: Int64 -> Handler Html
 getBlogOldR blogId = do
   post <- runDB.get404.toSqlKey$ blogId
@@ -115,8 +142,8 @@ postBlogR year month name = do
 
   now <- liftIO$ getCurrentTime
   runDB$ update blogId [
-    BlogPostTitle =. simpleBlogTitle simple,
-    BlogPostContent =. simpleBlogContent simple,
+    BlogPostTitle =. (stripTags$ simpleBlogTitle simple),
+    BlogPostContent =. (formatPreBlocks$ simpleBlogContent simple),
     BlogPostTimeUpdated =. now]
 
   return ()
@@ -161,12 +188,12 @@ postBlogNewR = do
   case (,) <$> (mkYear$ fromIntegral y) <*> (mkMonth$ m - 1) of
     Just (year, month) -> do
       simple <- runInputPost blogForm
-      let url = mkURL$ simpleBlogTitle simple
+      let url = (mkURL.stripTags.simpleBlogTitle$ simple)
       _ <- runDB.insert$ BlogPost {
         blogPostUnpublished = True,
         blogPostDeleted = True,
-        blogPostTitle = simpleBlogTitle simple,
-        blogPostContent = simpleBlogContent simple,
+        blogPostTitle = (stripTags$ simpleBlogTitle simple),
+        blogPostContent = (formatPreBlocks$ simpleBlogContent simple),
         blogPostYear = year,
         blogPostMonth =  month,
         blogPostUrl =  url,
