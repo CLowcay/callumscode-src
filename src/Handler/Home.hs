@@ -31,6 +31,9 @@ getHomeR = do
       }
       $(widgetFile "plain-page")
 
+getBlogHomeR :: Handler Html
+getBlogHomeR = getHomeR
+
 getAboutR :: Handler Html
 getAboutR = getPlainPageR "about" AboutR
 

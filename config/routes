@@ -5,6 +5,7 @@
 
 / HomeR GET
 
+/blog BlogHomeR GET
 /blog/#Int64 BlogOldR GET
 /blog/post/new BlogNewR GET POST
 /blog/#Year/#Month/#Text BlogR GET POST

@@ -145,6 +145,7 @@ instance Yesod App where
   isAuthorized (HomeR) False = return Authorized
   isAuthorized (FeedR) False = return Authorized
   isAuthorized (BlogOldR _) False = return Authorized
+  isAuthorized (BlogHomeR) False = return Authorized
   isAuthorized (BlogR _ _ _) False = return Authorized
   isAuthorized (ProjectsR) False = return Authorized
   isAuthorized (OldProjectsR) False = return Authorized
