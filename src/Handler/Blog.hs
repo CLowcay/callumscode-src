@@ -118,7 +118,8 @@ getBlogR year month name = do
   defaultLayout$ do
     atomLink FeedR "RSS"
     addScript$ StaticR js_jquery_3_2_1_min_js
-    addScript$ StaticR js_liveness_js
+
+    when auth$ addScript$ StaticR js_liveness_js
 
     let isNewPage = False
     let mPermalink = Just$ BlogR year month name

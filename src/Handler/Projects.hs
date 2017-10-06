@@ -163,8 +163,9 @@ getProjectsR = do
               (runDB$ selectList (filterProjects auth) [Desc SoftwareLastUpdate])
 
   defaultLayout $ do
-    addScript$ StaticR js_jquery_3_2_1_min_js
-    addScript$ StaticR js_liveness_js
+    when auth$ do
+      addScript$ StaticR js_jquery_3_2_1_min_js
+      addScript$ StaticR js_liveness_js
 
     setTitle "Callum's Code - projects"
     $(widgetFile "projects")
