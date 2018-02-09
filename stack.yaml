@@ -3,4 +3,6 @@ extra-package-dbs: []
 packages:
 - '.'
 extra-deps:
-resolver: lts-9.17
+- git: https://github.com/pbrisbin/yesod-markdown.git
+  commit: 4a3c6f4270eb1c11fb2b7fc003e650cec12bab43
+resolver: lts-10.5

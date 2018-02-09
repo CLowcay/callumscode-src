@@ -49,6 +49,7 @@ postContactR = do
           sesTo = [encodeUtf8.adminEmail$ appSettings master],
           sesAccessKey = encodeUtf8.awsKey$ appSettings master,
           sesSecretKey = encodeUtf8.awsSecret$ appSettings master,
+          sesSessionToken = Nothing,
           sesRegion = awsSESRegion$ appSettings master
         }
 
