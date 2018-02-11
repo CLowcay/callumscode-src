@@ -52,11 +52,11 @@ getPlainPageR page permalink = do
   Entity _ plainPage <- runDB$ getBy404$ UniquePlainPage page
 
   let mPermalink = Just permalink
-  editMode <- any (== "edit").fmap fst.reqGetParams <$> getRequest
+  editMode <- elem "edit".fmap fst.reqGetParams <$> getRequest
 
   defaultLayout $ do
-    setTitle$ "Callum's Code - " ++ (toHtml page)
-    let content = plainPageContent$ plainPage
+    setTitle$ "Callum's Code - " ++ toHtml page
+    let content = plainPageContent plainPage
     $(widgetFile "plain-page")
 
 postPlainPageR :: Text -> Handler ()
@@ -64,7 +64,7 @@ postPlainPageR page = do
   content <- runInputPost plainPageForm
   Entity pageId _ <- runDB.getBy404$ UniquePlainPage page
 
-  now <- liftIO$ getCurrentTime
+  now <- liftIO getCurrentTime
   runDB$ update pageId [
     PlainPageContent =. content,
     PlainPageTimeUpdated =. now]

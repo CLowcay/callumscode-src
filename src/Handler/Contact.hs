@@ -43,7 +43,7 @@ postContactR = do
           (Address Nothing (noreplyEmail$ appSettings master))
           (Address Nothing (adminEmail$ appSettings master))
           ("[CC/CONTACT] " <> emailSubject r)
-          (fromStrict$ header <> (unTextarea$ emailMessage r))
+          (fromStrict$ header <> unTextarea (emailMessage r))
         ses = SES {
           sesFrom = encodeUtf8.noreplyEmail$ appSettings master,
           sesTo = [encodeUtf8.adminEmail$ appSettings master],

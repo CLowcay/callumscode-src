@@ -40,13 +40,13 @@ srcFile :: App -> String -> FilePath
 srcFile master name = (unpack.uploadSrc.appSettings$ master) </> name
 
 screenshotDir :: App -> FilePath
-screenshotDir master = unpack.uploadScreenshot.appSettings$ master
+screenshotDir = unpack.uploadScreenshot.appSettings
 
 binDir :: App -> FilePath
-binDir master = unpack.uploadBin.appSettings$ master
+binDir = unpack.uploadBin.appSettings
 
 srcDir :: App -> FilePath
-srcDir master = unpack.uploadSrc.appSettings$ master
+srcDir = unpack.uploadSrc.appSettings
 
 
 -- This is where we define all of the routes in our application. For a full
@@ -72,9 +72,7 @@ instance Yesod App where
   -- Controls the base of generated URLs. For more information on modifying,
   -- see: https://github.com/yesodweb/yesod/wiki/Overriding-approot
   approot = ApprootRequest $ \app req ->
-    case appRoot $ appSettings app of
-      Nothing -> getApprootText guessApproot app req
-      Just root -> root
+    fromMaybe (getApprootText guessApproot app req) (appRoot$ appSettings app)
 
   -- Store session data on the client in encrypted cookies,
   -- default session idle timeout is 120 minutes
@@ -101,14 +99,13 @@ instance Yesod App where
     -- you to use normal widget features in default-layout.
 
     mauthId <- maybeAuthId
-    pc <- widgetToPageContent $ do
-      $(widgetFile "default-layout")
+    pc <- widgetToPageContent $(widgetFile "default-layout")
     withUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet")
 
-  errorHandler errorResponse = (fmap toTypedContent).defaultLayout$ do
+  errorHandler errorResponse = fmap toTypedContent.defaultLayout$ do
     setTitle.toHtml.show$ errorResponse
     $(widgetFile "error")
-    where formatArgs = concat.intersperse "/"
+    where formatArgs = intercalate "/"
 
   -- This function creates static content files in the static folder
   -- and names them based on a hash of their content. This allows
@@ -140,18 +137,18 @@ instance Yesod App where
 
   authRoute _ = Just $ AuthR LoginR
 
-  isAuthorized (FaviconR) False = return Authorized
-  isAuthorized (RobotsR) False = return Authorized
-  isAuthorized (HomeR) False = return Authorized
-  isAuthorized (FeedR) False = return Authorized
+  isAuthorized FaviconR False = return Authorized
+  isAuthorized RobotsR False = return Authorized
+  isAuthorized HomeR False = return Authorized
+  isAuthorized FeedR False = return Authorized
   isAuthorized (BlogOldR _) False = return Authorized
-  isAuthorized (BlogHomeR) False = return Authorized
-  isAuthorized (BlogR _ _ _) False = return Authorized
-  isAuthorized (ProjectsR) False = return Authorized
-  isAuthorized (OldProjectsR) False = return Authorized
-  isAuthorized (ContactR) _ = return Authorized
-  isAuthorized (AboutR) False = return Authorized
-  isAuthorized (PrivacyR) False = return Authorized
+  isAuthorized BlogHomeR False = return Authorized
+  isAuthorized BlogR {} False = return Authorized
+  isAuthorized ProjectsR False = return Authorized
+  isAuthorized OldProjectsR False = return Authorized
+  isAuthorized ContactR _ = return Authorized
+  isAuthorized AboutR False = return Authorized
+  isAuthorized PrivacyR False = return Authorized
   isAuthorized (UploadFileR _ _) False = return Authorized
   isAuthorized (StaticR _) False = return Authorized
   isAuthorized (AuthR _) _ = return Authorized
@@ -186,16 +183,14 @@ instance YesodAuth App where
   authPlugins master = [authGoogleEmail clientId clientSecret] <> dummy
     where clientId = googleClientId$ appSettings master
           clientSecret = googleClientSecret$ appSettings master
-          dummy =
-            if appAuthDummyLogin$ appSettings master
-            then [authDummy] else []
+          dummy = [authDummy | appAuthDummyLogin $ appSettings master]
 
   authHttpManager = appHttpManager
   maybeAuthId = lookupSession "_ID"
   loginHandler = do
     ma <- lift maybeAuthId
     when (isJust ma).lift.redirect$ HomeR
-    plugins <- authPlugins <$> (lift getYesod)
+    plugins <- authPlugins <$> lift getYesod
     rtp <- getRouteToParent
 
     lift$ defaultLayout$ do
@@ -209,8 +204,7 @@ instance YesodAuth App where
     if authId == admin then do
       setSession "_ID" authId 
       return$ Authenticated authId
-    else do
-      return$ UserError YAM.UserName
+    else return$ UserError YAM.UserName
 
 -- This instance is required to use forms. You can modify renderMessage to
 -- achieve customized and internationalized form validation messages.

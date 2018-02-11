@@ -82,23 +82,22 @@ instance PathPiece Month where
   toPathPiece = pack.show
  
 instance PersistField Year where
-  toPersistValue (Year x) = (PersistInt64).fromIntegral$ x
+  toPersistValue (Year x) = PersistInt64 . fromIntegral$ x
   fromPersistValue (PersistInt64 x) = case mkYear.fromIntegral$ x of
-    Nothing -> Left$ "Invalid year " ++ (pack$ show x)
+    Nothing -> Left$ "Invalid year " ++ pack (show x)
     Just v -> Right v
-  fromPersistValue x = Left$ "Invalid year " ++ (pack$ show x)
+  fromPersistValue x = Left$ "Invalid year " ++ pack (show x)
 
 instance PersistField Month where
-  toPersistValue (Month x) = (PersistInt64).fromIntegral$ x
+  toPersistValue (Month x) = PersistInt64 . fromIntegral$ x
   fromPersistValue (PersistInt64 x) = case mkMonth.fromIntegral$ x of
-    Nothing -> Left$ "Invalid month " ++ (pack$ show x)
+    Nothing -> Left$ "Invalid month " ++ pack (show x)
     Just v -> Right v
-  fromPersistValue x = Left$ "Invalid month " ++ (pack$ show x)
+  fromPersistValue x = Left$ "Invalid month " ++ pack (show x)
 
 instance PersistFieldSql Year where
   sqlType _ = SqlInt64
 
 instance PersistFieldSql Month where
   sqlType _ = SqlInt64
-
 

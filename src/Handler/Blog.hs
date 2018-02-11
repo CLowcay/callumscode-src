@@ -7,7 +7,7 @@
 {-# LANGUAGE TupleSections #-}
 module Handler.Blog where
 
-import Import hiding (toLower)
+import Import
 
 import Common
 import Database.Persist.Sql
@@ -58,13 +58,12 @@ getFeedR :: Handler RepAtom
 getFeedR = do
   posts <- getAllPosts False
   let arbitraryDate = UTCTime (fromGregorian 1970 1 1) 0
-  let latest =  fromMaybe arbitraryDate
-                  .fmap blogPostTimeUpdated
+  let latest =  maybe arbitraryDate blogPostTimeUpdated
                   .fmap (maximumBy (comparing blogPostTimeCreated))
                   .fromNullable$ posts
   let entries = fmap feedEntry posts
 
-  atomFeed$ Feed {
+  atomFeed Feed {
     feedTitle = "Callum's Code Blog",
     feedLinkSelf = FeedR,
     feedLinkHome = HomeR,
@@ -82,14 +81,14 @@ formatPreBlocks =
   preEscapedToMarkup
   . renderTags
   . mconcat
-  . (fmap) removeBreaks
+  . fmap removeBreaks
   . findBlocks (~== ("<pre>" :: String)) (~== ("</pre>" :: String))
   . parseTags . toStrict . renderHtml
   where
     removeBreaks [] = []
     removeBreaks (t:tags) =
       if t ~== ("<pre>" :: String)
-      then t:fmap removeBreaks' tags else (t:tags)
+      then t:fmap removeBreaks' tags else t:tags
     removeBreaks' :: Tag Text -> Tag Text
     removeBreaks' tag =
       if tag ~== ("<br>" :: String)
@@ -113,7 +112,7 @@ getBlogR year month name = do
   auth <- (== Authorized) <$> isAdmin
   Entity _ blogPost <- runDB.getBy404$ UniqueBlogPost year month name
   morePosts <- getAllPosts auth
-  editMode <- any (== "edit").fmap fst.reqGetParams <$> getRequest
+  editMode <- elem "edit".fmap fst.reqGetParams <$> getRequest
   
   defaultLayout$ do
     atomLink FeedR "RSS"
@@ -125,14 +124,14 @@ getBlogR year month name = do
     let mPermalink = Just$ BlogR year month name
     let title = blogPostTitle blogPost
     let content = blogPostContent blogPost
-    let mtime = Just$
+    let mtime = Just
                 (blogPostTimeCreated blogPost,
                  blogPostTimeUpdated blogPost)
     setTitle.(++ "  - Callum's Code").toHtml.blogPostTitle$ blogPost 
-    when (not editMode)$ do
+    unless editMode$ do
       addScript$ StaticR js_prism_js
       toWidgetHead$ [julius| window.MathJax = { showMathMenu: false }; |]
-      addScriptRemote$ "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML"
+      addScriptRemote "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML"
       addStylesheet$ StaticR css_prism_css
     $(widgetFile "blog")
 
@@ -141,10 +140,10 @@ postBlogR year month name = do
   simple <- runInputPost blogForm
   Entity blogId _ <- runDB.getBy404$ UniqueBlogPost year month name
 
-  now <- liftIO$ getCurrentTime
+  now <- liftIO getCurrentTime
   runDB$ update blogId [
-    BlogPostTitle =. (stripTags$ simpleBlogTitle simple),
-    BlogPostContent =. (formatPreBlocks$ simpleBlogContent simple),
+    BlogPostTitle =. stripTags (simpleBlogTitle simple),
+    BlogPostContent =. formatPreBlocks (simpleBlogContent simple),
     BlogPostTimeUpdated =. now]
 
   return ()
@@ -154,14 +153,14 @@ postBlogLivenessR year month name = do
   live <- runInputPost$ ireq checkBoxField "live"
   Entity blogId blog <- runDB.getBy404$ UniqueBlogPost year month name
 
-  now <- liftIO$ getCurrentTime
+  now <- liftIO getCurrentTime
   let publish = if blogPostUnpublished blog && live
                 then [BlogPostUnpublished =. False,
                       BlogPostTimeCreated =. now,
                       BlogPostTimeUpdated =. now]
                 else []
 
-  runDB$ update blogId ([BlogPostDeleted =. (not live)] ++ publish)
+  runDB$ update blogId ((BlogPostDeleted =. not live):publish)
   return$ object ["live" .= live]
 
 getBlogNewR :: Handler Html
@@ -186,15 +185,15 @@ postBlogNewR :: Handler Html
 postBlogNewR = do
   now <- liftIO getCurrentTime
   let (y, m, _) = toGregorian$ utctDay now
-  case (,) <$> (mkYear$ fromIntegral y) <*> (mkMonth$ m - 1) of
+  case (,) <$> mkYear (fromIntegral y) <*> mkMonth (m - 1) of
     Just (year, month) -> do
       simple <- runInputPost blogForm
-      let url = (mkURL.stripTags.simpleBlogTitle$ simple)
+      let url = mkURL.stripTags.simpleBlogTitle$ simple
       _ <- runDB.insert$ BlogPost {
         blogPostUnpublished = True,
         blogPostDeleted = True,
-        blogPostTitle = (stripTags$ simpleBlogTitle simple),
-        blogPostContent = (formatPreBlocks$ simpleBlogContent simple),
+        blogPostTitle = stripTags$ simpleBlogTitle simple,
+        blogPostContent = formatPreBlocks$ simpleBlogContent simple,
         blogPostYear = year,
         blogPostMonth =  month,
         blogPostUrl =  url,

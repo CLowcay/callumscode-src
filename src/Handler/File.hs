@@ -1,11 +1,8 @@
-{-# LANGUAGE EmptyDataDecls             #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GADTs                      #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
 {-# LANGUAGE NoImplicitPrelude          #-}
 {-# LANGUAGE OverloadedStrings          #-}
-{-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TypeFamilies               #-}
 module Handler.File where
 
@@ -39,8 +36,8 @@ postUploadR target = do
       object [
         "name" .= fileName info,
         "size" .= size,
-        "url" .= (render$ UploadFileR target (fileName info)),
-        "deleteUrl" .= (render$ UploadFileR target (fileName info)),
+        "url" .= render (UploadFileR target (fileName info)),
+        "deleteUrl" .= render (UploadFileR target (fileName info)),
         "deleteType" .= ("DELETE" :: Text)
       ]]]
 

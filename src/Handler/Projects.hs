@@ -23,17 +23,17 @@ emptyCats = Categorized [] [] []
 categorize :: [Entity Software] -> Categorized Software
 categorize =
   foldr
-    (\(Entity _ v@(Software {softwareCat = cat})) cats -> case cat of
-      Haskell -> cats {catHaskell = v:(catHaskell cats)}
-      XBlite -> cats {catXBlite = v:(catXBlite cats)}
-      LibertyBasic -> cats {catLibertyBasic = v:(catLibertyBasic cats)})
+    (\(Entity _ v@Software {softwareCat = cat}) cats -> case cat of
+      Haskell -> cats {catHaskell = v:catHaskell cats}
+      XBlite -> cats {catXBlite = v:catXBlite cats}
+      LibertyBasic -> cats {catLibertyBasic = v:catLibertyBasic cats})
     emptyCats
 
 newURL :: Text
 newURL = "new"
 
 dirField :: MonadIO m => FilePath -> m (Field Handler [Element String])
-dirField = (fmap$ selectFieldList.fmap option).liftIO.listDirectory
+dirField = fmap (selectFieldList.fmap option).liftIO.listDirectory
   where option x = (pack x :: Text, x)
 
 -- The editing form
@@ -46,7 +46,7 @@ softwareForm mSoft html = do
 
   let {
     form = renderDivs$ Software <$>
-      pure (fromMaybe newURL (softwareUrl <$> mSoft)) <*>
+      pure (maybe newURL softwareUrl mSoft) <*>
       areq checkBoxField "Live" (softwareLive <$> mSoft) <*>
       areq textField "Name" (softwareName <$> mSoft) <*>
       areq textField "Version" (softwareVersion <$> mSoft) <*>
@@ -55,7 +55,7 @@ softwareForm mSoft html = do
       areq linkField linkFieldSettings (softwareLink <$> mSoft) <*>
       aopt linkSrcField linkSrcFieldSettings (softwareLinkSrc <$> mSoft) <*>
       aopt screenshotField screenshotFieldSettings (softwareScreenshot <$> mSoft) <*>
-      fmap (Markdown . (filter (not.(== '\r'))) . unTextarea)
+      fmap (Markdown . filter (/= '\r') . unTextarea)
         (areq textareaField "Description"
           (Textarea . unMarkdown.softwareDescription <$> mSoft))
   }
@@ -76,7 +76,7 @@ softwareForm mSoft html = do
       ("Liberty Basic", LibertyBasic)]
 
 projectEditWidget ::
-  Widget -> Enctype -> Maybe Software -> (Route App) -> Widget
+  Widget -> Enctype -> Maybe Software -> Route App -> Widget
 projectEditWidget widget enctype item action = do
   app <- getYesod
   binFiles <- liftIO.listDirectory.binDir$ app
@@ -88,8 +88,7 @@ projectEditWidget widget enctype item action = do
   addScript$ StaticR js_jquery_iframe_transport_js
   addScript$ StaticR js_jquery_fileupload_js
 
-  setTitle$ "Callum's Code - " ++
-    (fromMaybe "New project"$ fmap (toHtml.softwareName) item)
+  setTitle$ "Callum's Code - " ++ maybe "New project" (toHtml.softwareName) item
   $(widgetFile "projectEdit")
 
 -- Editor pages
@@ -106,7 +105,7 @@ postProjectEditR url = do
   ((result, widget), enctype) <- runFormPost$ softwareForm Nothing 
   case result of
     FormSuccess r -> do
-      now <- liftIO$ getCurrentTime
+      now <- liftIO getCurrentTime
       runDB$ update itemId [
         SoftwareLive =. softwareLive r,
         SoftwareName =. softwareName r,
@@ -160,7 +159,7 @@ getProjectsR :: Handler Html
 getProjectsR = do
   auth <- (== Authorized) <$> isAdmin
   projects <- categorize <$>
-              (runDB$ selectList (filterProjects auth) [Desc SoftwareLastUpdate])
+              runDB (selectList (filterProjects auth) [Desc SoftwareLastUpdate])
 
   defaultLayout $ do
     when auth$ do
@@ -179,10 +178,8 @@ getProjectsR = do
     lbDescription = "Liberty BASIC is an interpreted BASIC which had a strong community some years ago.  I used it to get into Windows programming (previously I'd been using QBasic under DOS).  These programs are very old now and I'm not even sure they'd still run under the latest versions of Liberty BASIC."
     projectSummary auth item = $(widgetFile "projectSummary")
     categoryProjects :: Bool -> Text -> Text -> [Software] -> Widget
-    categoryProjects auth catName catDescription catData = do
-      $(widgetFile "projectCat")
+    categoryProjects auth catName catDescription catData = $(widgetFile "projectCat")
 
 getOldProjectsR :: Handler Html
-getOldProjectsR = do
-  redirect$ ProjectsR
+getOldProjectsR = redirect ProjectsR
 

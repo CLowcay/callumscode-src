@@ -6,11 +6,11 @@ import Data.Char (isSpace, toLower)
 
 mkURL :: Text -> Text
 mkURL = pack.fmap (formatSpace '-')
-          .concat.fmap (take 1).groupBy (\a b -> isSpace a && isSpace b)
+          .concatMap (take 1).groupBy (\a b -> isSpace a && isSpace b)
           .fmap toLower.unpack
 
 adjustURL :: Text -> Text -> Text
-adjustURL lastURL thisURL = thisURL <> (pad 4 '0'$ add1$ suffix 4 lastURL)
+adjustURL lastURL thisURL = thisURL <> pad 4 '0' (add1$ suffix 4 lastURL)
   where add1 = tshow.(+1).fromMaybe (0 :: Int).readMay
 
 suffix :: Int -> Text -> Text
