@@ -7,7 +7,7 @@ module Widget.Editor where
 
 import Import
 
-editorWidget :: Maybe (Route App) -> Bool -> WidgetT App IO ()
+editorWidget :: Maybe (Route App) -> Bool -> WidgetFor App ()
 editorWidget mDoneRoute isNewPage = do
   addScriptRemote "//cdn.jsdelivr.net/medium-editor/latest/js/medium-editor.min.js"
   addStylesheetRemote "//cdn.jsdelivr.net/medium-editor/latest/css/medium-editor.min.css"

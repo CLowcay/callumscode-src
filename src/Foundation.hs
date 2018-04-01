@@ -64,7 +64,7 @@ srcDir = unpack.uploadSrc.appSettings
 mkYesodData "App" $(parseRoutesFile "config/routes")
 
 -- | A convenient synonym for creating forms.
-type Form x = Html -> MForm (HandlerT App IO) (FormResult x, Widget)
+type Form x = Html -> MForm (HandlerFor App) (FormResult x, Widget)
 
 -- Please see the documentation for the Yesod typeclass. There are a number
 -- of settings which can be configured by overriding methods here.
@@ -128,8 +128,8 @@ instance Yesod App where
 
   -- What messages should be logged. The following includes all messages when
   -- in development, and warnings and errors in production.
-  shouldLog app _source level =
-    appShouldLogAll (appSettings app)
+  shouldLogIO app _source level =
+    return$ appShouldLogAll (appSettings app)
       || level == LevelWarn
       || level == LevelError
 
@@ -185,15 +185,15 @@ instance YesodAuth App where
           clientSecret = googleClientSecret$ appSettings master
           dummy = [authDummy | appAuthDummyLogin $ appSettings master]
 
-  authHttpManager = appHttpManager
+  authHttpManager = appHttpManager <$> getYesod
   maybeAuthId = lookupSession "_ID"
   loginHandler = do
-    ma <- lift maybeAuthId
-    when (isJust ma).lift.redirect$ HomeR
-    plugins <- authPlugins <$> lift getYesod
+    ma <- maybeAuthId
+    when (isJust ma).redirect$ HomeR
+    plugins <- authPlugins <$> getYesod
     rtp <- getRouteToParent
 
-    lift$ defaultLayout$ do
+    authLayout$ do
       setTitle "Administrator login"
       $(widgetFile "auth")
 
