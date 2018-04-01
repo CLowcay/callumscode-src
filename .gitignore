@@ -1,4 +1,5 @@
 dist*
+tags
 static/tmp/
 static/combined/
 uploads_backup
