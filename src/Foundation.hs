@@ -7,16 +7,18 @@
 
 module Foundation where
 
-import Database.Persist.Sql (ConnectionPool, runSqlPool)
-import Import.NoFoundation
-import qualified Yesod.Auth.Message as YAM
-import qualified Yesod.Core.Unsafe as Unsafe
-import Text.Hamlet          (hamletFile)
-import Text.Jasmine         (minifym)
-import Yesod.Auth.Dummy
-import Yesod.Auth.GoogleEmail2
-import Yesod.Core.Types     (Logger)
-import Yesod.Default.Util   (addStaticContentExternal)
+import           Database.Persist.Sql           ( ConnectionPool
+                                                , runSqlPool
+                                                )
+import           Import.NoFoundation
+import qualified Yesod.Auth.Message            as YAM
+import qualified Yesod.Core.Unsafe             as Unsafe
+import           Text.Hamlet                    ( hamletFile )
+import           Text.Jasmine                   ( minifym )
+import           Yesod.Auth.Dummy
+import           Yesod.Auth.GoogleEmail2
+import           Yesod.Core.Types               ( Logger )
+import           Yesod.Default.Util             ( addStaticContentExternal )
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -31,22 +33,23 @@ data App = App
     }
 
 screenshotFile :: App -> String -> FilePath
-screenshotFile master name = (unpack.uploadScreenshot.appSettings$ master) </> name
+screenshotFile master name =
+  (unpack . uploadScreenshot . appSettings $ master) </> name
 
 binFile :: App -> String -> FilePath
-binFile master name = (unpack.uploadBin.appSettings$ master) </> name
+binFile master name = (unpack . uploadBin . appSettings $ master) </> name
 
 srcFile :: App -> String -> FilePath
-srcFile master name = (unpack.uploadSrc.appSettings$ master) </> name
+srcFile master name = (unpack . uploadSrc . appSettings $ master) </> name
 
 screenshotDir :: App -> FilePath
-screenshotDir = unpack.uploadScreenshot.appSettings
+screenshotDir = unpack . uploadScreenshot . appSettings
 
 binDir :: App -> FilePath
-binDir = unpack.uploadBin.appSettings
+binDir = unpack . uploadBin . appSettings
 
 srcDir :: App -> FilePath
-srcDir = unpack.uploadSrc.appSettings
+srcDir = unpack . uploadSrc . appSettings
 
 
 -- This is where we define all of the routes in our application. For a full
@@ -156,14 +159,14 @@ instance Yesod App where
 
 isAdmin :: Handler AuthResult
 isAdmin = do
-  mu <- maybeAuthId
+  mu   <- maybeAuthId
   site <- getYesod
-  let admin = adminEmail$ appSettings site
+  let admin = adminEmail $ appSettings site
 
-  return$ case mu of
-    Nothing -> AuthenticationRequired
-    Just authId ->
-      if authId == admin then Authorized
+  return $ case mu of
+    Nothing     -> AuthenticationRequired
+    Just authId -> if authId == admin
+      then Authorized
       else Unauthorized "You do not have admin rights on the site"
 
 -- How to run database actions.
@@ -202,7 +205,7 @@ instance YesodAuth App where
     let admin = adminEmail$ appSettings site
     let authId = credsIdent creds
     if authId == admin then do
-      setSession "_ID" authId 
+      setSession "_ID" authId
       return$ Authenticated authId
     else return$ UserError YAM.UserName
 
@@ -219,4 +222,3 @@ instance HasHttpManager App where
 
 unsafeHandler :: App -> Handler a -> IO a
 unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
-

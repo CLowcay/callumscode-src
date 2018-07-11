@@ -3,5 +3,4 @@ extra-package-dbs: []
 packages:
 - '.'
 extra-deps:
-  - yesod-markdown-0.12.3 
-resolver: lts-11.9
+resolver: lts-12.0

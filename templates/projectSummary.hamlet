@@ -27,9 +27,4 @@
     <p>
       <img src=@{UploadFileR UploadScreenshot (pack linkScreenshot)} alt="Screenshot for #{softwareName item}">
 
-  $case markdownToHtml (softwareDescription item)
-    $of Left e
-      <p>Error formatting HTML: #{show e}
-    $of Right html
-      #{html}
-
+  #{softwareDescription item}

@@ -7,13 +7,19 @@
 {-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TypeFamilies               #-}
-module Types (
-  Year, Month, mkYear, mkMonth, mkMonthS,
-  SoftwareCategory(..), UploadTarget(..)
- ) where
+module Types
+  ( Year
+  , Month
+  , mkYear
+  , mkMonth
+  , mkMonthS
+  , SoftwareCategory(..)
+  , UploadTarget(..)
+  )
+where
 
-import ClassyPrelude.Yesod
-import Database.Persist.Sql
+import           ClassyPrelude.Yesod
+import           Database.Persist.Sql
 
 data SoftwareCategory = Haskell | XBlite | LibertyBasic
   deriving (Show, Read, Eq)
@@ -34,29 +40,27 @@ instance Show Year where
   show (Year x) = show x
 
 mkYear :: Int -> Maybe Year
-mkYear x
-  | x == 0 = Nothing
-  | otherwise = Just$ Year x
+mkYear x | x == 0    = Nothing
+         | otherwise = Just $ Year x
 
 mkMonth :: Int -> Maybe Month
-mkMonth x
-  | x >= 0 && x < 12 = Just$ Month x
-  | otherwise = Nothing
+mkMonth x | x >= 0 && x < 12 = Just $ Month x
+          | otherwise        = Nothing
 
 mkMonthS :: Text -> Maybe Month
-mkMonthS "jan" = Just$ Month 0
-mkMonthS "feb" = Just$ Month 1
-mkMonthS "mar" = Just$ Month 2
-mkMonthS "apr" = Just$ Month 3
-mkMonthS "may" = Just$ Month 4
-mkMonthS "jun" = Just$ Month 5
-mkMonthS "jul" = Just$ Month 6
-mkMonthS "aug" = Just$ Month 7
-mkMonthS "sep" = Just$ Month 8
-mkMonthS "oct" = Just$ Month 9
-mkMonthS "nov" = Just$ Month 10
-mkMonthS "dec" = Just$ Month 11
-mkMonthS _ = Nothing
+mkMonthS "jan" = Just $ Month 0
+mkMonthS "feb" = Just $ Month 1
+mkMonthS "mar" = Just $ Month 2
+mkMonthS "apr" = Just $ Month 3
+mkMonthS "may" = Just $ Month 4
+mkMonthS "jun" = Just $ Month 5
+mkMonthS "jul" = Just $ Month 6
+mkMonthS "aug" = Just $ Month 7
+mkMonthS "sep" = Just $ Month 8
+mkMonthS "oct" = Just $ Month 9
+mkMonthS "nov" = Just $ Month 10
+mkMonthS "dec" = Just $ Month 11
+mkMonthS _     = Nothing
 
 instance Show Month where
   show (Month 0 ) =  "jan"
@@ -76,11 +80,11 @@ instance Show Month where
 instance PathPiece Year where
   fromPathPiece = (mkYear =<<).readMay
   toPathPiece = pack.show
- 
+
 instance PathPiece Month where
   fromPathPiece = mkMonthS
   toPathPiece = pack.show
- 
+
 instance PersistField Year where
   toPersistValue (Year x) = PersistInt64 . fromIntegral$ x
   fromPersistValue (PersistInt64 x) = case mkYear.fromIntegral$ x of
@@ -100,4 +104,3 @@ instance PersistFieldSql Year where
 
 instance PersistFieldSql Month where
   sqlType _ = SqlInt64
-

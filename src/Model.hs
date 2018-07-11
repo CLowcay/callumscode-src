@@ -9,10 +9,11 @@
 {-# LANGUAGE TypeFamilies               #-}
 module Model where
 
-import ClassyPrelude.Yesod
-import Database.Persist.Quasi
-import Types
-import Yesod.Markdown
+import           ClassyPrelude.Yesod
+import           Database.Persist.Quasi
+import           Text.Markdown
+import           Types
+import           Yesod.Text.Markdown            ( )
 
 -- You can define all of your database entities in the entities file.
 -- You can find more information on persistent and how to declare entities
@@ -20,4 +21,3 @@ import Yesod.Markdown
 -- http://www.yesodweb.com/book/persistent/
 share [mkPersist sqlSettings, mkMigrate "migrateAll"]
     $(persistFileWith lowerCaseSettings "config/models")
-

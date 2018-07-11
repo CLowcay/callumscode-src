@@ -34,15 +34,15 @@ copyright: © Callum Lowcay
 #analytics: UA-YOURCODE
 #
 
-googleClientId: "_env:GOOGLE_CLIENT_ID:"
-googleClientSecret: "_env:GOOGLE_CLIENT_SECRET:"
+googleClientId: "_env:GOOGLE_CLIENT_ID:."
+googleClientSecret: "_env:GOOGLE_CLIENT_SECRET:."
 
-noreplyEmail: "_env:NOREPLY_EMAIL:"
-adminEmail: "_env:ADMIN_EMAIL:"
+noreplyEmail: "_env:NOREPLY_EMAIL:."
+adminEmail: "_env:ADMIN_EMAIL:."
 
-awsKey: "_env:AWS_KEY:"
-awsSecret: "_env:AWS_SECRET:"
-awsSESRegion: "_env:AWS_SES_REGION:"
+awsKey: "_env:AWS_KEY:."
+awsSecret: "_env:AWS_SECRET:."
+awsSESRegion: "_env:AWS_SES_REGION:."
 
 uploadScreenshot: "_env:UPLOAD_SCREENSHOT:uploads_backup/screenshot"
 uploadBin: "_env:UPLOAD_BIN:uploads_backup/bin"

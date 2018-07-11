@@ -1,8 +1,10 @@
 {-# LANGUAGE CPP               #-}
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
 {-# LANGUAGE TemplateHaskell   #-}
+
 -- | Settings are centralized, as much as possible, into this file. This
 -- includes database connection settings, static file locations, etc.
 -- In addition, you can configure a number of different aspects of Yesod
@@ -10,18 +12,29 @@
 -- declared in the Foundation.hs file.
 module Settings where
 
-import ClassyPrelude.Yesod
-import qualified Control.Exception as Exception
-import Data.Aeson                  (Result (..), fromJSON, withObject, (.!=),
-                                    (.:?))
-import Data.FileEmbed              (embedFile)
-import Data.Yaml                   (decodeEither')
-import Database.Persist.Sqlite     (SqliteConf)
-import Language.Haskell.TH.Syntax  (Exp, Name, Q)
-import Network.Wai.Handler.Warp    (HostPreference)
-import Yesod.Default.Config2       (applyEnvValue, configSettingsYml)
-import Yesod.Default.Util          (WidgetFileSettings, widgetFileNoReload,
-                                    widgetFileReload)
+import           ClassyPrelude.Yesod
+import qualified Control.Exception             as Exception
+import           Data.Aeson                     ( Result(..)
+                                                , fromJSON
+                                                , withObject
+                                                , (.!=)
+                                                , (.:?)
+                                                )
+import           Data.FileEmbed                 ( embedFile )
+import           Data.Yaml                      ( decodeEither' )
+import           Database.Persist.Sqlite        ( SqliteConf )
+import           Language.Haskell.TH.Syntax     ( Exp
+                                                , Name
+                                                , Q
+                                                )
+import           Network.Wai.Handler.Warp       ( HostPreference )
+import           Yesod.Default.Config2          ( applyEnvValue
+                                                , configSettingsYml
+                                                )
+import           Yesod.Default.Util             ( WidgetFileSettings
+                                                , widgetFileNoReload
+                                                , widgetFileReload
+                                                )
 
 -- | Runtime settings to configure this application. These settings can be
 -- loaded from various sources: defaults, environment variables, config files,
@@ -75,6 +88,11 @@ data AppSettings = AppSettings
     , uploadBin                 :: Text
     , uploadSrc                 :: Text
     }
+
+-- convertNullsToStrings :: Value -> Value
+-- convertNullsToStrings Null       = String ""
+-- convertNullsToStrings (Object o) = Object $ fmap convertNullsToStrings o
+-- convertNullsToStrings x          = x
 
 instance FromJSON AppSettings where
   parseJSON = withObject "AppSettings" $ \o -> do
@@ -135,10 +153,12 @@ combineSettings = def
 -- user.
 
 widgetFile :: String -> Q Exp
-widgetFile = (if appReloadTemplates compileTimeAppSettings
-                then widgetFileReload
-                else widgetFileNoReload)
-              widgetFileSettings
+widgetFile =
+  (if appReloadTemplates compileTimeAppSettings
+      then widgetFileReload
+      else widgetFileNoReload
+    )
+    widgetFileSettings
 
 -- | Raw bytes at compile time of @config/settings.yml@
 configSettingsYmlBS :: ByteString
@@ -146,15 +166,19 @@ configSettingsYmlBS = $(embedFile configSettingsYml)
 
 -- | @config/settings.yml@, parsed to a @Value@.
 configSettingsYmlValue :: Value
-configSettingsYmlValue = either Exception.throw id
-                       $ decodeEither' configSettingsYmlBS
+configSettingsYmlValue =
+  either Exception.throw id $ decodeEither' configSettingsYmlBS
 
 -- | A version of @AppSettings@ parsed at compile time from @config/settings.yml@.
 compileTimeAppSettings :: AppSettings
 compileTimeAppSettings =
-  case fromJSON $ applyEnvValue False mempty configSettingsYmlValue of
-    Error e -> error e
-    Success settings -> settings
+  case
+      fromJSON $  applyEnvValue False
+                                mempty
+                                configSettingsYmlValue
+    of
+      Error e -> error e
+      Success settings -> settings
 
 -- The following two functions can be used to combine multiple CSS or JS files
 -- at compile time to decrease the number of http requests.
@@ -163,12 +187,9 @@ compileTimeAppSettings =
 -- > $(combineStylesheets 'StaticR [style1_css, style2_css])
 
 combineStylesheets :: Name -> [Route Static] -> Q Exp
-combineStylesheets = combineStylesheets'
-  (appSkipCombining compileTimeAppSettings)
-  combineSettings
+combineStylesheets =
+  combineStylesheets' (appSkipCombining compileTimeAppSettings) combineSettings
 
 combineScripts :: Name -> [Route Static] -> Q Exp
-combineScripts = combineScripts'
-  (appSkipCombining compileTimeAppSettings)
-  combineSettings
-
+combineScripts =
+  combineScripts' (appSkipCombining compileTimeAppSettings) combineSettings
