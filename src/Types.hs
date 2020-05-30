@@ -21,18 +21,19 @@ where
 
 import           ClassyPrelude.Yesod
 import           Database.Persist.Sql
-import CMark
-import Text.Blaze
+import           CMark
+import           Text.Blaze
 
 newtype Markdown = Markdown { unMarkdown :: Text}
 instance PersistField Markdown where
   toPersistValue (Markdown x) = PersistText x
   fromPersistValue (PersistText x) = Right (Markdown x)
-  fromPersistValue x = Left$ "Invalid markdown " ++ pack (show x)
+  fromPersistValue x               = Left $ "Invalid markdown " ++ pack (show x)
 instance PersistFieldSql Markdown where
   sqlType _ = SqlString
 instance ToMarkup Markdown where
-  toMarkup (Markdown x) = preEscapedToMarkup (commonmarkToHtml [optSafe, optSmart] x)
+  toMarkup (Markdown x) =
+    preEscapedToMarkup (commonmarkToHtml [optSafe, optSmart] x)
 
 data SoftwareCategory = Haskell | XBlite | LibertyBasic
   deriving (Show, Read, Eq)
@@ -41,7 +42,7 @@ data UploadTarget = UploadBin | UploadSrc | UploadScreenshot
   deriving (Show, Read, Eq)
 
 instance PathPiece UploadTarget where
-  toPathPiece = tshow
+  toPathPiece   = tshow
   fromPathPiece = readMay
 
 derivePersistField "SoftwareCategory"
@@ -76,41 +77,41 @@ mkMonthS "dec" = Just $ Month 11
 mkMonthS _     = Nothing
 
 instance Show Month where
-  show (Month 0 ) =  "jan"
-  show (Month 1 ) =  "feb"
-  show (Month 2 ) =  "mar"
-  show (Month 3 ) =  "apr"
-  show (Month 4 ) =  "may"
-  show (Month 5 ) =  "jun"
-  show (Month 6 ) =  "jul"
-  show (Month 7 ) =  "aug"
-  show (Month 8 ) =  "sep"
-  show (Month 9 ) =  "oct"
+  show (Month 0 ) = "jan"
+  show (Month 1 ) = "feb"
+  show (Month 2 ) = "mar"
+  show (Month 3 ) = "apr"
+  show (Month 4 ) = "may"
+  show (Month 5 ) = "jun"
+  show (Month 6 ) = "jul"
+  show (Month 7 ) = "aug"
+  show (Month 8 ) = "sep"
+  show (Month 9 ) = "oct"
   show (Month 10) = "nov"
   show (Month 11) = "dec"
-  show _ = error "Invalid month value!"
+  show _          = error "Invalid month value!"
 
 instance PathPiece Year where
-  fromPathPiece = (mkYear =<<).readMay
-  toPathPiece = pack.show
+  fromPathPiece = (mkYear =<<) . readMay
+  toPathPiece   = pack . show
 
 instance PathPiece Month where
   fromPathPiece = mkMonthS
-  toPathPiece = pack.show
+  toPathPiece   = pack . show
 
 instance PersistField Year where
-  toPersistValue (Year x) = PersistInt64 . fromIntegral$ x
-  fromPersistValue (PersistInt64 x) = case mkYear.fromIntegral$ x of
-    Nothing -> Left$ "Invalid year " ++ pack (show x)
-    Just v -> Right v
-  fromPersistValue x = Left$ "Invalid year " ++ pack (show x)
+  toPersistValue (Year x) = PersistInt64 . fromIntegral $ x
+  fromPersistValue (PersistInt64 x) = case mkYear . fromIntegral $ x of
+    Nothing -> Left $ "Invalid year " ++ pack (show x)
+    Just v  -> Right v
+  fromPersistValue x = Left $ "Invalid year " ++ pack (show x)
 
 instance PersistField Month where
-  toPersistValue (Month x) = PersistInt64 . fromIntegral$ x
-  fromPersistValue (PersistInt64 x) = case mkMonth.fromIntegral$ x of
-    Nothing -> Left$ "Invalid month " ++ pack (show x)
-    Just v -> Right v
-  fromPersistValue x = Left$ "Invalid month " ++ pack (show x)
+  toPersistValue (Month x) = PersistInt64 . fromIntegral $ x
+  fromPersistValue (PersistInt64 x) = case mkMonth . fromIntegral $ x of
+    Nothing -> Left $ "Invalid month " ++ pack (show x)
+    Just v  -> Right v
+  fromPersistValue x = Left $ "Invalid month " ++ pack (show x)
 
 instance PersistFieldSql Year where
   sqlType _ = SqlInt64

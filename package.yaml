@@ -6,26 +6,40 @@ dependencies:
 - base
 - blaze-html
 - blaze-markup
+- bytestring
+- case-insensitive
+- classy-prelude
+- classy-prelude-conduit
 - classy-prelude-yesod
 - cmark
+- conduit
+- containers
+- data-default
 - directory
 - fast-logger
 - file-embed
 - foreign-store
 - hjsmin
+- http-client-tls
+- http-conduit
 - mime-mail
 - mime-mail-ses
+- monad-control
 - monad-logger
 - persistent
 - persistent-sqlite
 - persistent-template
+- safe
 - shakespeare
 - tagsoup
 - template-haskell
 - text
 - time
+- unordered-containers
+- vector
 - wai
 - wai-extra
+- wai-logger
 - warp
 - yaml
 - yesod
@@ -73,18 +87,6 @@ executables:
     when:
     - condition: flag(library-only)
       buildable: false
-
-# Test suite
-tests:
-  test:
-    main: Spec.hs
-    source-dirs: test
-    ghc-options: -Wall
-    dependencies:
-    - callumscode2
-    - hspec
-    - microlens
-    - yesod-test
 
 # Define flags used by "yesod devel" to make compilation faster
 flags:

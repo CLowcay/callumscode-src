@@ -5,15 +5,17 @@
 {-# LANGUAGE TypeFamilies #-}
 module Widget.Editor where
 
-import Import
+import           Import
 
 editorWidget :: Maybe (Route App) -> Bool -> WidgetFor App ()
 editorWidget mDoneRoute isNewPage = do
-  addScriptRemote "//cdn.jsdelivr.net/medium-editor/latest/js/medium-editor.min.js"
-  addStylesheetRemote "//cdn.jsdelivr.net/medium-editor/latest/css/medium-editor.min.css"
-  addStylesheet$ StaticR css_medium_theme_css
-  addScript$ StaticR js_jquery_3_2_1_min_js
-  addScript$ StaticR js_editor_js
+  addScriptRemote
+    "//cdn.jsdelivr.net/medium-editor/latest/js/medium-editor.min.js"
+  addStylesheetRemote
+    "//cdn.jsdelivr.net/medium-editor/latest/css/medium-editor.min.css"
+  addStylesheet $ StaticR css_medium_theme_css
+  addScript $ StaticR js_jquery_3_2_1_min_js
+  addScript $ StaticR js_editor_js
 
   toWidgetBody [hamlet|
     <div .admin-buttons>
@@ -74,9 +76,9 @@ editorWidget mDoneRoute isNewPage = do
     });
   |]
 
-  where
-    saveButtonWidget =
-      if isNewPage then [julius|
+ where
+  saveButtonWidget = if isNewPage
+    then [julius|
         save.addEventListener("click",
           function(event) {
             const title = document.createElement('input');
@@ -100,7 +102,7 @@ editorWidget mDoneRoute isNewPage = do
             form.submit();
           });
       |]
-      else [julius|
+    else [julius|
         save.addEventListener("click",
           function(event) {
             removeLanguageDropdowns();

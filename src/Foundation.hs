@@ -74,8 +74,9 @@ type Form x = Html -> MForm (HandlerFor App) (FormResult x, Widget)
 instance Yesod App where
   -- Controls the base of generated URLs. For more information on modifying,
   -- see: https://github.com/yesodweb/yesod/wiki/Overriding-approot
-  approot = ApprootRequest $ \app req ->
-    fromMaybe (getApprootText guessApproot app req) (appRoot$ appSettings app)
+  approot = ApprootRequest $ \app req -> fromMaybe
+    (getApprootText guessApproot app req)
+    (appRoot $ appSettings app)
 
   -- Store session data on the client in encrypted cookies,
   -- default session idle timeout is 120 minutes
@@ -102,11 +103,11 @@ instance Yesod App where
     -- you to use normal widget features in default-layout.
 
     mauthId <- maybeAuthId
-    pc <- widgetToPageContent $(widgetFile "default-layout")
+    pc      <- widgetToPageContent $(widgetFile "default-layout")
     withUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet")
 
-  errorHandler errorResponse = fmap toTypedContent.defaultLayout$ do
-    setTitle.toHtml.show$ errorResponse
+  errorHandler errorResponse = fmap toTypedContent . defaultLayout $ do
+    setTitle . toHtml . show $ errorResponse
     $(widgetFile "error")
     where formatArgs = intercalate "/"
 
@@ -117,45 +118,47 @@ instance Yesod App where
   addStaticContent ext mime content = do
     master <- getYesod
     let staticDir = appStaticDir $ appSettings master
-    addStaticContentExternal
-      minifym
-      genFileName
-      staticDir
-      (StaticR . flip StaticRoute [])
-      ext
-      mime
-      content
+    addStaticContentExternal minifym
+                             genFileName
+                             staticDir
+                             (StaticR . flip StaticRoute [])
+                             ext
+                             mime
+                             content
     where
       -- Generate a unique filename based on the content itself
-      genFileName lbs = "autogen-" ++ base64md5 lbs
+          genFileName lbs = "autogen-" ++ base64md5 lbs
 
   -- What messages should be logged. The following includes all messages when
   -- in development, and warnings and errors in production.
   shouldLogIO app _source level =
-    return$ appShouldLogAll (appSettings app)
-      || level == LevelWarn
-      || level == LevelError
+    return
+      $  appShouldLogAll (appSettings app)
+      || level
+      == LevelWarn
+      || level
+      == LevelError
 
   makeLogger = return . appLogger
 
   authRoute _ = Just $ AuthR LoginR
 
-  isAuthorized FaviconR False = return Authorized
-  isAuthorized RobotsR False = return Authorized
-  isAuthorized HomeR False = return Authorized
-  isAuthorized FeedR False = return Authorized
-  isAuthorized (BlogOldR _) False = return Authorized
-  isAuthorized BlogHomeR False = return Authorized
-  isAuthorized BlogR {} False = return Authorized
-  isAuthorized ProjectsR False = return Authorized
-  isAuthorized OldProjectsR False = return Authorized
-  isAuthorized ContactR _ = return Authorized
-  isAuthorized AboutR False = return Authorized
-  isAuthorized PrivacyR False = return Authorized
+  isAuthorized FaviconR          False = return Authorized
+  isAuthorized RobotsR           False = return Authorized
+  isAuthorized HomeR             False = return Authorized
+  isAuthorized FeedR             False = return Authorized
+  isAuthorized (BlogOldR _)      False = return Authorized
+  isAuthorized BlogHomeR         False = return Authorized
+  isAuthorized BlogR{}           False = return Authorized
+  isAuthorized ProjectsR         False = return Authorized
+  isAuthorized OldProjectsR      False = return Authorized
+  isAuthorized ContactR          _     = return Authorized
+  isAuthorized AboutR            False = return Authorized
+  isAuthorized PrivacyR          False = return Authorized
   isAuthorized (UploadFileR _ _) False = return Authorized
-  isAuthorized (StaticR _) False = return Authorized
-  isAuthorized (AuthR _) _ = return Authorized
-  isAuthorized _ _ = isAdmin
+  isAuthorized (StaticR _      ) False = return Authorized
+  isAuthorized (AuthR   _      ) _     = return Authorized
+  isAuthorized _                 _     = isAdmin
 
 isAdmin :: Handler AuthResult
 isAdmin = do
@@ -184,30 +187,32 @@ instance YesodAuth App where
   loginDest _ = HomeR
   logoutDest _ = HomeR
   authPlugins master = [authGoogleEmail clientId clientSecret] <> dummy
-    where clientId = googleClientId$ appSettings master
-          clientSecret = googleClientSecret$ appSettings master
-          dummy = [authDummy | appAuthDummyLogin $ appSettings master]
+   where
+    clientId     = googleClientId $ appSettings master
+    clientSecret = googleClientSecret $ appSettings master
+    dummy        = [ authDummy | appAuthDummyLogin $ appSettings master ]
 
   authHttpManager = appHttpManager <$> getYesod
-  maybeAuthId = lookupSession "_ID"
-  loginHandler = do
+  maybeAuthId     = lookupSession "_ID"
+  loginHandler    = do
     ma <- maybeAuthId
-    when (isJust ma).redirect$ HomeR
+    when (isJust ma) . redirect $ HomeR
     plugins <- authPlugins <$> getYesod
-    rtp <- getRouteToParent
+    rtp     <- getRouteToParent
 
-    authLayout$ do
+    authLayout $ do
       setTitle "Administrator login"
       $(widgetFile "auth")
 
   authenticate creds = do
     site <- getYesod
-    let admin = adminEmail$ appSettings site
+    let admin  = adminEmail $ appSettings site
     let authId = credsIdent creds
-    if authId == admin then do
-      setSession "_ID" authId
-      return$ Authenticated authId
-    else return$ UserError YAM.UserName
+    if authId == admin
+      then do
+        setSession "_ID" authId
+        return $ Authenticated authId
+      else return $ UserError YAM.UserName
 
 -- This instance is required to use forms. You can modify renderMessage to
 -- achieve customized and internationalized form validation messages.
