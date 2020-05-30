@@ -29,4 +29,5 @@ test_google_creds.sh
 uploads_backup
 yesod-devel/
 config/client_session_key.aes
+.vscode
 

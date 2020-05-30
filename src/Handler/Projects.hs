@@ -4,12 +4,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
+
 module Handler.Projects where
 
 import           Common
 import           Import
 import           System.Directory
-import           Yesod.Text.Markdown
 
 data Categorized a = Categorized {
   catHaskell :: [a],
@@ -59,7 +59,7 @@ softwareForm mSoft html = do
         <*> aopt screenshotField
                  screenshotFieldSettings
                  (softwareScreenshot <$> mSoft)
-        <*> areq markdownField "Description" (softwareDescription <$> mSoft)
+        <*> (Markdown <$> areq textField "Description" (unMarkdown . softwareDescription <$> mSoft))
 
   form html
  where

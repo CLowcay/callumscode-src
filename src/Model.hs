@@ -1,3 +1,4 @@
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE EmptyDataDecls             #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GADTs                      #-}
@@ -5,15 +6,16 @@
 {-# LANGUAGE MultiParamTypeClasses      #-}
 {-# LANGUAGE NoImplicitPrelude          #-}
 {-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE UndecidableInstances #-}
+
 module Model where
 
 import           ClassyPrelude.Yesod
 import           Database.Persist.Quasi
-import           Text.Markdown
 import           Types
-import           Yesod.Text.Markdown            ( )
 
 -- You can define all of your database entities in the entities file.
 -- You can find more information on persistent and how to declare entities

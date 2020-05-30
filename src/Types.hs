@@ -10,6 +10,7 @@
 module Types
   ( Year
   , Month
+  , Markdown(..)
   , mkYear
   , mkMonth
   , mkMonthS
@@ -20,6 +21,18 @@ where
 
 import           ClassyPrelude.Yesod
 import           Database.Persist.Sql
+import CMark
+import Text.Blaze
+
+newtype Markdown = Markdown { unMarkdown :: Text}
+instance PersistField Markdown where
+  toPersistValue (Markdown x) = PersistText x
+  fromPersistValue (PersistText x) = Right (Markdown x)
+  fromPersistValue x = Left$ "Invalid markdown " ++ pack (show x)
+instance PersistFieldSql Markdown where
+  sqlType _ = SqlString
+instance ToMarkup Markdown where
+  toMarkup (Markdown x) = preEscapedToMarkup (commonmarkToHtml [optSafe, optSmart] x)
 
 data SoftwareCategory = Haskell | XBlite | LibertyBasic
   deriving (Show, Read, Eq)

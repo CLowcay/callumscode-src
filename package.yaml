@@ -2,38 +2,46 @@ name:    callumscode2
 version: "0.2.0"
 
 dependencies:
-- aeson >=0.6 && <1.4
-- base >=4.9.1.0 && <5
-- blaze-html >= 0.9.0.1 && < 0.10
-- classy-prelude-yesod >=1.1 && < 1.5
-- directory >=1.1 && <1.4
-- fast-logger >=2.2 && <2.5
+- aeson
+- base
+- blaze-html
+- blaze-markup
+- classy-prelude-yesod
+- cmark
+- directory
+- fast-logger
 - file-embed
 - foreign-store
-- hjsmin >=0.1 && <0.3
-- markdown >= 0.1.17 && < 0.2
-- mime-mail >= 0.4.14 && < 0.5
-- mime-mail-ses >= 0.4.1 && < 0.5
-- monad-logger >=0.3 && <0.4
-- persistent >=2.0 && <2.9
-- persistent-sqlite >=2.6.2 && <2.9
-- persistent-template >=2.0 && <2.9
-- shakespeare >=2.0 && <2.1
-- tagsoup >= 0.14 && < 1.0
+- hjsmin
+- mime-mail
+- mime-mail-ses
+- monad-logger
+- persistent
+- persistent-sqlite
+- persistent-template
+- shakespeare
+- tagsoup
 - template-haskell
-- text >=0.11 && <2.0
-- time >= 1.8 && < 1.9
-- wai >= 3.2.1 && < 3.3
-- wai-extra >=3.0 && <3.1
-- warp >=3.0 && <3.3
-- yaml >=0.8 && <0.9
-- yesod >=1.6 && <1.7
-- yesod-auth >=1.6 && <1.7
-- yesod-core >=1.6 && <1.7
-- yesod-form >=1.6 && <1.7
-- yesod-newsfeed >= 1.6 && < 1.7
-- yesod-static >=1.6 && <1.7
-- yesod-text-markdown >= 0.1.0 && < 0.2
+- text
+- time
+- wai
+- wai-extra
+- warp
+- yaml
+- yesod
+- yesod-auth
+- yesod-core
+- yesod-form
+- yesod-newsfeed
+- yesod-static
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Wincomplete-uni-patterns
+- -Wincomplete-record-updates
+- -Wredundant-constraints
+- -Wpartial-fields
 
 # The library contains all of our application code. The executable
 # defined below is just a thin wrapper.
@@ -44,13 +52,11 @@ library:
     then:
       ghc-options:
       - -Wall
-      - -fwarn-tabs
       - -O0
       cpp-options: -DDEVELOPMENT
     else:
       ghc-options:
       - -Wall
-      - -fwarn-tabs
       - -O2
 
 # Runnable executable for our application
@@ -76,9 +82,9 @@ tests:
     ghc-options: -Wall
     dependencies:
     - callumscode2
-    - hspec >=2.0.0
-    - yesod-test
+    - hspec
     - microlens
+    - yesod-test
 
 # Define flags used by "yesod devel" to make compilation faster
 flags:

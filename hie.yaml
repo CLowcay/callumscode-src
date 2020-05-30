@@ -1,0 +1,8 @@
+cradle:
+  stack:
+    - path: "./test"
+      component: "callumscode2:test"
+    - path: "./src"
+      component: "callumscode2:lib"
+    - path: "./app"
+      component: "callumscode2:exe:callumscode2"
