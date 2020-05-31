@@ -47,13 +47,14 @@ getAllPosts auth = (fmap . fmap) entityVal . runDB $ selectList
 
 feedEntry :: BlogPost -> FeedEntry (Route App)
 feedEntry post = FeedEntry
-  { feedEntryLink      = BlogR (blogPostYear post)
-                               (blogPostMonth post)
-                               (blogPostUrl post)
-  , feedEntryUpdated   = blogPostTimeUpdated post
-  , feedEntryTitle     = blogPostTitle post
-  , feedEntryContent   = blogPostContent post
-  , feedEntryEnclosure = Nothing
+  { feedEntryLink       = BlogR (blogPostYear post)
+                                (blogPostMonth post)
+                                (blogPostUrl post)
+  , feedEntryUpdated    = blogPostTimeUpdated post
+  , feedEntryTitle      = blogPostTitle post
+  , feedEntryContent    = blogPostContent post
+  , feedEntryEnclosure  = Nothing
+  , feedEntryCategories = []
   }
 
 getFeedR :: Handler RepAtom
