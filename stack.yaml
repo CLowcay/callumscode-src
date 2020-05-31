@@ -1,6 +1,5 @@
-flags: {}
-extra-package-dbs: []
 packages:
 - '.'
-extra-deps:
+extra-deps: [yesod-auth-oauth2-0.6.1.2, hoauth2-1.8.9]
 resolver: lts-15.14
+

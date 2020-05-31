@@ -44,6 +44,7 @@ dependencies:
 - yaml
 - yesod
 - yesod-auth
+- yesod-auth-oauth2
 - yesod-core
 - yesod-form
 - yesod-newsfeed

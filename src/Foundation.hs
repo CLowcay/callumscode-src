@@ -11,14 +11,14 @@ import           Database.Persist.Sql           ( ConnectionPool
                                                 , runSqlPool
                                                 )
 import           Import.NoFoundation
-import qualified Yesod.Auth.Message            as YAM
-import qualified Yesod.Core.Unsafe             as Unsafe
 import           Text.Hamlet                    ( hamletFile )
 import           Text.Jasmine                   ( minifym )
 import           Yesod.Auth.Dummy
-import           Yesod.Auth.GoogleEmail2
+import           Yesod.Auth.OAuth2.Google
 import           Yesod.Core.Types               ( Logger )
 import           Yesod.Default.Util             ( addStaticContentExternal )
+import qualified Yesod.Auth.Message            as YAM
+import qualified Yesod.Core.Unsafe             as Unsafe
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -186,7 +186,8 @@ instance YesodAuth App where
   getAuthId = return . Just . credsIdent
   loginDest _ = HomeR
   logoutDest _ = HomeR
-  authPlugins master = [authGoogleEmail clientId clientSecret] <> dummy
+  authPlugins master =
+    [oauth2GoogleScoped ["email", "profile"] clientId clientSecret] <> dummy
    where
     clientId     = googleClientId $ appSettings master
     clientSecret = googleClientSecret $ appSettings master
