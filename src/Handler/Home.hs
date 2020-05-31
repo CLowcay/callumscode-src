@@ -3,10 +3,10 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
+
 module Handler.Home where
 
 import           Import
-
 import           Widget.Editor
 
 plainPageForm :: FormInput Handler Html
@@ -66,4 +66,4 @@ postPlainPageR page = do
   runDB
     $ update pageId [PlainPageContent =. content, PlainPageTimeUpdated =. now]
 
-  return ()
+  pure ()

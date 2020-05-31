@@ -13,28 +13,15 @@
 module Settings where
 
 import           ClassyPrelude.Yesod
-import qualified Control.Exception             as Exception
-import           Data.Aeson                     ( Result(..)
-                                                , fromJSON
-                                                , withObject
-                                                , (.!=)
-                                                , (.:?)
-                                                )
+import           Data.Aeson                     ( Result(..) , fromJSON , withObject , (.!=) , (.:?))
 import           Data.FileEmbed                 ( embedFile )
 import           Data.Yaml                      ( decodeEither' )
 import           Database.Persist.Sqlite        ( SqliteConf )
-import           Language.Haskell.TH.Syntax     ( Exp
-                                                , Name
-                                                , Q
-                                                )
+import           Language.Haskell.TH.Syntax     ( Exp , Name , Q)
 import           Network.Wai.Handler.Warp       ( HostPreference )
-import           Yesod.Default.Config2          ( applyEnvValue
-                                                , configSettingsYml
-                                                )
-import           Yesod.Default.Util             ( WidgetFileSettings
-                                                , widgetFileNoReload
-                                                , widgetFileReload
-                                                )
+import           Yesod.Default.Config2          ( applyEnvValue , configSettingsYml)
+import           Yesod.Default.Util             ( WidgetFileSettings , widgetFileNoReload , widgetFileReload)
+import qualified Control.Exception             as Exception
 
 -- | Runtime settings to configure this application. These settings can be
 -- loaded from various sources: defaults, environment variables, config files,
@@ -134,7 +121,7 @@ instance FromJSON AppSettings where
     uploadBin                 <- o .:  "uploadBin"
     uploadSrc                 <- o .:  "uploadSrc"
 
-    return AppSettings {..}
+    pure AppSettings {..}
 
 -- | Settings for 'widgetFile', such as which template languages to support and
 -- default Hamlet settings.

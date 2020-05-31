@@ -130,7 +130,7 @@ postProjectLivenessR url = do
   live            <- runInputPost $ ireq checkBoxField "live"
   Entity itemId _ <- runDB . getBy404 $ UniqueSoftware url
   runDB $ update itemId [SoftwareLive =. live]
-  return $ object ["live" .= live]
+  pure $ object ["live" .= live]
 
 -- New page
 getProjectNewR :: Handler Html

@@ -5,13 +5,14 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TupleSections #-}
+
 module Handler.Blog where
 
 import           Import
 
 import           Common
-import           Database.Persist.Sql
 import           Data.Time.Format
+import           Database.Persist.Sql
 import           Text.Blaze.Html.Renderer.Text
 import           Text.HTML.TagSoup
 import           Widget.Editor
@@ -153,7 +154,7 @@ postBlogR year month name = do
     , BlogPostTimeUpdated =. now
     ]
 
-  return ()
+  pure ()
 
 postBlogLivenessR :: Year -> Month -> Text -> Handler Value
 postBlogLivenessR year month name = do
@@ -170,7 +171,7 @@ postBlogLivenessR year month name = do
         else []
 
   runDB $ update blogId ((BlogPostDeleted =. not live) : publish)
-  return $ object ["live" .= live]
+  pure $ object ["live" .= live]
 
 getBlogNewR :: Handler Html
 getBlogNewR = do

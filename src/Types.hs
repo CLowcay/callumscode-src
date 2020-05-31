@@ -7,6 +7,7 @@
 {-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TypeFamilies               #-}
+
 module Types
   ( Year
   , Month
@@ -19,9 +20,9 @@ module Types
   )
 where
 
+import           CMark
 import           ClassyPrelude.Yesod
 import           Database.Persist.Sql
-import           CMark
 import           Text.Blaze
 
 newtype Markdown = Markdown { unMarkdown :: Text}

@@ -4,6 +4,7 @@
 {-# LANGUAGE NoImplicitPrelude          #-}
 {-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE TypeFamilies               #-}
+
 module Handler.File where
 
 import           Import
@@ -21,7 +22,7 @@ postUploadR target = do
 
   exists <- liftIO $ doesFileExist name
   if exists
-    then return $ object
+    then pure $ object
       [ "files"
           .= [ object
                  [ "name" .= fileName info
@@ -36,7 +37,7 @@ postUploadR target = do
 
       render <- getUrlRender
 
-      return $ object
+      pure $ object
         [ "files"
             .= [ object
                    [ "name" .= fileName info
@@ -65,4 +66,4 @@ deleteUploadFileR target filename = do
         UploadSrc        -> srcFile app (unpack filename)
         UploadScreenshot -> screenshotFile app (unpack filename)
   liftIO $ removeFile filePath
-  return $ object ["files" .= [object [filename .= True]]]
+  pure $ object ["files" .= [object [filename .= True]]]

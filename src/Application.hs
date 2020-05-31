@@ -6,6 +6,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
+
 module Application
     ( getApplicationDev
     , appMain
@@ -21,27 +22,19 @@ module Application
     ) where
 
 import Control.Monad.Logger                 (liftLoc, runLoggingT)
-import Database.Persist.Sqlite              (createSqlitePool, runSqlPool,
-                                             sqlDatabase, sqlPoolSize)
-import Import
-import Language.Haskell.TH.Syntax           (qLocation)
-import Network.Wai (Middleware)
-import Network.Wai.Handler.Warp             (Settings, defaultSettings,
-                                             defaultShouldDisplayException,
-                                             runSettings, setHost,
-                                             setOnException, setPort, getPort)
-import Network.Wai.Middleware.RequestLogger (Destination (Logger),
-                                             IPAddrSource (..),
-                                             OutputFormat (..), destination,
-                                             mkRequestLogger, outputFormat)
-import System.Log.FastLogger                (defaultBufSize, newStdoutLoggerSet,
-                                             toLogStr)
+import Database.Persist.Sqlite              (createSqlitePool, runSqlPool, sqlDatabase, sqlPoolSize)
 import Handler.Blog
 import Handler.Common
 import Handler.Contact
 import Handler.File
 import Handler.Home
 import Handler.Projects
+import Import
+import Language.Haskell.TH.Syntax           (qLocation)
+import Network.Wai (Middleware)
+import Network.Wai.Handler.Warp             (Settings, defaultSettings, defaultShouldDisplayException, runSettings, setHost, setOnException, setPort, getPort)
+import Network.Wai.Middleware.RequestLogger (Destination (Logger), IPAddrSource (..), OutputFormat (..), destination, mkRequestLogger, outputFormat)
+import System.Log.FastLogger                (defaultBufSize, newStdoutLoggerSet, toLogStr)
 
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
@@ -84,7 +77,7 @@ makeFoundation appSettings = do
     runLoggingT (runSqlPool (runMigration migrateAll) pool) logFunc
 
     -- Return the foundation
-    return $ mkFoundation pool
+    pure $ mkFoundation pool
 
 -- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and
 -- applying some additional middlewares.
@@ -93,7 +86,7 @@ makeApplication foundation = do
     logWare <- makeLogWare foundation
     -- Create the WAI application and apply middlewares
     appPlain <- toWaiAppPlain foundation
-    return $ logWare $ defaultMiddlewaresNoLogging appPlain
+    pure $ logWare $ defaultMiddlewaresNoLogging appPlain
 
 makeLogWare :: App -> IO Middleware
 makeLogWare foundation =
@@ -131,7 +124,7 @@ getApplicationDev = do
     foundation <- makeFoundation settings
     wsettings <- getDevSettings $ warpSettings foundation
     app <- makeApplication foundation
-    return (wsettings, app)
+    pure (wsettings, app)
 
 getAppSettings :: IO AppSettings
 getAppSettings = loadYamlSettings [configSettingsYml] [] useEnv
@@ -170,10 +163,10 @@ getApplicationRepl = do
     foundation <- makeFoundation settings
     wsettings <- getDevSettings $ warpSettings foundation
     app1 <- makeApplication foundation
-    return (getPort wsettings, foundation, app1)
+    pure (getPort wsettings, foundation, app1)
 
 shutdownApp :: App -> IO ()
-shutdownApp _ = return ()
+shutdownApp _ = pure ()
 
 
 ---------------------------------------------

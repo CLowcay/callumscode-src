@@ -9,3 +9,4 @@ database:
   database: callumscode2_test.sqlite3
 
 auth-dummy-login: true
+

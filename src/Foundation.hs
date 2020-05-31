@@ -132,32 +132,32 @@ instance Yesod App where
   -- What messages should be logged. The following includes all messages when
   -- in development, and warnings and errors in production.
   shouldLogIO app _source level =
-    return
+    pure
       $  appShouldLogAll (appSettings app)
       || level
       == LevelWarn
       || level
       == LevelError
 
-  makeLogger = return . appLogger
+  makeLogger = pure . appLogger
 
   authRoute _ = Just $ AuthR LoginR
 
-  isAuthorized FaviconR          False = return Authorized
-  isAuthorized RobotsR           False = return Authorized
-  isAuthorized HomeR             False = return Authorized
-  isAuthorized FeedR             False = return Authorized
-  isAuthorized (BlogOldR _)      False = return Authorized
-  isAuthorized BlogHomeR         False = return Authorized
-  isAuthorized BlogR{}           False = return Authorized
-  isAuthorized ProjectsR         False = return Authorized
-  isAuthorized OldProjectsR      False = return Authorized
-  isAuthorized ContactR          _     = return Authorized
-  isAuthorized AboutR            False = return Authorized
-  isAuthorized PrivacyR          False = return Authorized
-  isAuthorized (UploadFileR _ _) False = return Authorized
-  isAuthorized (StaticR _      ) False = return Authorized
-  isAuthorized (AuthR   _      ) _     = return Authorized
+  isAuthorized FaviconR          False = pure Authorized
+  isAuthorized RobotsR           False = pure Authorized
+  isAuthorized HomeR             False = pure Authorized
+  isAuthorized FeedR             False = pure Authorized
+  isAuthorized (BlogOldR _)      False = pure Authorized
+  isAuthorized BlogHomeR         False = pure Authorized
+  isAuthorized BlogR{}           False = pure Authorized
+  isAuthorized ProjectsR         False = pure Authorized
+  isAuthorized OldProjectsR      False = pure Authorized
+  isAuthorized ContactR          _     = pure Authorized
+  isAuthorized AboutR            False = pure Authorized
+  isAuthorized PrivacyR          False = pure Authorized
+  isAuthorized (UploadFileR _ _) False = pure Authorized
+  isAuthorized (StaticR _      ) False = pure Authorized
+  isAuthorized (AuthR   _      ) _     = pure Authorized
   isAuthorized _                 _     = isAdmin
 
 isAdmin :: Handler AuthResult
@@ -166,7 +166,7 @@ isAdmin = do
   site <- getYesod
   let admin = adminEmail $ appSettings site
 
-  return $ case mu of
+  pure $ case mu of
     Nothing     -> AuthenticationRequired
     Just authId -> if authId == admin
       then Authorized
@@ -183,7 +183,7 @@ instance YesodPersistRunner App where
 
 instance YesodAuth App where
   type AuthId App = Text
-  getAuthId = return . Just . credsIdent
+  getAuthId = pure . Just . credsIdent
   loginDest _ = HomeR
   logoutDest _ = HomeR
   authPlugins master =
@@ -212,8 +212,8 @@ instance YesodAuth App where
     if authId == admin
       then do
         setSession "_ID" authId
-        return $ Authenticated authId
-      else return $ UserError YAM.UserName
+        pure $ Authenticated authId
+      else pure $ UserError YAM.UserName
 
 -- This instance is required to use forms. You can modify renderMessage to
 -- achieve customized and internationalized form validation messages.
