@@ -1,0 +1,10 @@
+.stack-work
+.vscode
+.git
+Dockerfile
+yesod-devel
+dist
+*.swp
+tags
+TAGS
+

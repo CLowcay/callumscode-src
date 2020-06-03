@@ -6,8 +6,6 @@ cabal.sandbox.config
 callumscode2.cabal
 deploy
 dist*
-Dockerfile
-.dockerignore
 .DS_Store
 *.hi
 .hsenv*
