@@ -22,3 +22,4 @@ getFaviconR = do
 getRobotsR :: Handler TypedContent
 getRobotsR =
   pure $ TypedContent typePlain $ toContent $(embedFile "config/robots.txt")
+

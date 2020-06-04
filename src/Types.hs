@@ -119,3 +119,4 @@ instance PersistFieldSql Year where
 
 instance PersistFieldSql Month where
   sqlType _ = SqlInt64
+

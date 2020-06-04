@@ -61,3 +61,4 @@ postContactR = do
     _ -> defaultLayout $ do
       setTitle "Callum's Code - contact"
       $(widgetFile "contact")
+

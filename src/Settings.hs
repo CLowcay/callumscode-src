@@ -71,9 +71,7 @@ data AppSettings = AppSettings
     , awsSecret                 :: Text
     , awsSESRegion              :: Text
 
-    , uploadScreenshot          :: Text
-    , uploadBin                 :: Text
-    , uploadSrc                 :: Text
+    , uploadDir                 :: Text
     }
 
 -- convertNullsToStrings :: Value -> Value
@@ -117,9 +115,7 @@ instance FromJSON AppSettings where
     awsSecret                 <- o .:  "awsSecret"
     awsSESRegion              <- o .:  "awsSESRegion"
 
-    uploadScreenshot          <- o .:  "uploadScreenshot"
-    uploadBin                 <- o .:  "uploadBin"
-    uploadSrc                 <- o .:  "uploadSrc"
+    uploadDir                 <- o .:  "uploadDir"
 
     pure AppSettings {..}
 

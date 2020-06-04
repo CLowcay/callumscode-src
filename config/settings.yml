@@ -44,7 +44,5 @@ awsKey: "_env:AWS_KEY:."
 awsSecret: "_env:AWS_SECRET:."
 awsSESRegion: "_env:AWS_SES_REGION:."
 
-uploadScreenshot: "_env:UPLOAD_SCREENSHOT:uploads_backup/screenshot"
-uploadBin: "_env:UPLOAD_BIN:uploads_backup/bin"
-uploadSrc: "_env:UPLOAD_SRC:uploads_backup/src"
+uploadDir: "_env:UPLOAD_DIR:uploads_backup"
 

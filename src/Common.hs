@@ -31,3 +31,4 @@ pad w c = reverse . pack . take w . (<> repeat c) . unpack . reverse
 
 formatSpace :: Char -> Char -> Char
 formatSpace repl x = if isSpace x then repl else x
+

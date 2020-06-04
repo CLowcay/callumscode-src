@@ -34,23 +34,25 @@ data App = App
 
 screenshotFile :: App -> String -> FilePath
 screenshotFile master name =
-  (unpack . uploadScreenshot . appSettings $ master) </> name
+  (unpack . uploadDir . appSettings $ master) </> "screenshot" </> name
 
 binFile :: App -> String -> FilePath
-binFile master name = (unpack . uploadBin . appSettings $ master) </> name
+binFile master name =
+  (unpack . uploadDir . appSettings $ master) </> "bin" </> name
 
 srcFile :: App -> String -> FilePath
-srcFile master name = (unpack . uploadSrc . appSettings $ master) </> name
+srcFile master name =
+  (unpack . uploadDir . appSettings $ master) </> "src" </> name
 
 screenshotDir :: App -> FilePath
-screenshotDir = unpack . uploadScreenshot . appSettings
+screenshotDir master =
+  (unpack . uploadDir . appSettings $ master) </> "screenshot"
 
 binDir :: App -> FilePath
-binDir = unpack . uploadBin . appSettings
+binDir master = (unpack . uploadDir . appSettings $ master) </> "bin"
 
 srcDir :: App -> FilePath
-srcDir = unpack . uploadSrc . appSettings
-
+srcDir master = (unpack . uploadDir . appSettings $ master) </> "src"
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
@@ -134,10 +136,8 @@ instance Yesod App where
   shouldLogIO app _source level =
     pure
       $  appShouldLogAll (appSettings app)
-      || level
-      == LevelWarn
-      || level
-      == LevelError
+      || (level == LevelWarn)
+      || (level == LevelError)
 
   makeLogger = pure . appLogger
 
@@ -228,3 +228,4 @@ instance HasHttpManager App where
 
 unsafeHandler :: App -> Handler a -> IO a
 unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
+
