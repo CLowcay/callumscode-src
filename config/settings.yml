@@ -40,9 +40,8 @@ googleClientSecret: "_env:GOOGLE_CLIENT_SECRET:."
 noreplyEmail: "_env:NOREPLY_EMAIL:."
 adminEmail: "_env:ADMIN_EMAIL:."
 
-awsKey: "_env:AWS_KEY:."
-awsSecret: "_env:AWS_SECRET:."
-awsSESRegion: "_env:AWS_SES_REGION:."
+awsKey: "_env:AWS_SECRET_KEY_ID:."
+awsSecret: "_env:AWS_SECRET_ACCESS_KEY:."
+awsRegion: "_env:AWS_DEFAULT_REGION:."
 
 uploadDir: "_env:UPLOAD_DIR:uploads_backup"
-

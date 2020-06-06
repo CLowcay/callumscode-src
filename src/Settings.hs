@@ -69,8 +69,7 @@ data AppSettings = AppSettings
     , adminEmail                :: Text
     , awsKey                    :: Text
     , awsSecret                 :: Text
-    , awsSESRegion              :: Text
-
+    , awsRegion                 :: Text
     , uploadDir                 :: Text
     }
 
@@ -113,8 +112,7 @@ instance FromJSON AppSettings where
 
     awsKey                    <- o .:  "awsKey"
     awsSecret                 <- o .:  "awsSecret"
-    awsSESRegion              <- o .:  "awsSESRegion"
-
+    awsRegion                 <- o .:  "awsRegion"
     uploadDir                 <- o .:  "uploadDir"
 
     pure AppSettings {..}

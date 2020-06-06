@@ -51,7 +51,7 @@ postContactR = do
             , sesAccessKey    = encodeUtf8 . awsKey $ appSettings master
             , sesSecretKey    = encodeUtf8 . awsSecret $ appSettings master
             , sesSessionToken = Nothing
-            , sesRegion       = awsSESRegion $ appSettings master
+            , sesRegion       = awsRegion $ appSettings master
             }
 
       renderSendMailSES (appHttpManager master) ses mail

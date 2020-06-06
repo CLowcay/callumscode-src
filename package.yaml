@@ -3,8 +3,6 @@ version: "0.2.0"
 
 dependencies:
 - aeson
-- amazonka-core
-- amazonka-s3
 - base
 - blaze-html
 - blaze-markup
