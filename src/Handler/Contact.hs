@@ -1,9 +1,14 @@
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
-module Handler.Contact where
+
+module Handler.Contact
+  ( getContactR
+  , postContactR
+  )
+where
 
 import           Import
 import           Network.Mail.Mime

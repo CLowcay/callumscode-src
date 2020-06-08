@@ -6,7 +6,16 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TupleSections #-}
 
-module Handler.Blog where
+module Handler.Blog
+  ( getFeedR
+  , getBlogOldR
+  , getBlogNewR
+  , getBlogR
+  , postBlogR
+  , postBlogNewR
+  , postBlogLivenessR
+  )
+where
 
 import           Import
 

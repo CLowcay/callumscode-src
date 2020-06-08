@@ -23,8 +23,9 @@
 /about AboutR GET POST
 /privacy PrivacyR GET POST
 
+/check HealthCheckR GET
+
 /file/#UploadTarget UploadR POST
 /file/#UploadTarget/#Text UploadFileR GET DELETE
 
 /auth AuthR Auth getAuth
-

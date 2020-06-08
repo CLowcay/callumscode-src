@@ -4,7 +4,17 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
 
-module Handler.Home where
+module Handler.Home
+  ( getHomeR
+  , getBlogHomeR
+  , getAboutR
+  , postAboutR
+  , getPrivacyR
+  , postPrivacyR
+  , getPlainPageR
+  , postPlainPageR
+  )
+where
 
 import           Import
 import           Widget.Editor

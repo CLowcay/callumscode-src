@@ -5,7 +5,7 @@
 {-# LANGUAGE TypeFamilies #-}
 
 -- | Common handler functions.
-module Handler.Common where
+module Handler.Common (getFaviconR, getRobotsR, getHealthCheckR) where
 
 import           Data.FileEmbed                 ( embedFile )
 import           Import
@@ -23,3 +23,5 @@ getRobotsR :: Handler TypedContent
 getRobotsR =
   pure $ TypedContent typePlain $ toContent $(embedFile "config/robots.txt")
 
+getHealthCheckR :: Handler Text
+getHealthCheckR = pure "OK"

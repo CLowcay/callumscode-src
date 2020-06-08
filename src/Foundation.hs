@@ -152,6 +152,7 @@ instance Yesod App where
   isAuthorized ContactR          _     = pure Authorized
   isAuthorized AboutR            False = pure Authorized
   isAuthorized PrivacyR          False = pure Authorized
+  isAuthorized HealthCheckR      False = pure Authorized
   isAuthorized (UploadFileR _ _) False = pure Authorized
   isAuthorized (StaticR _      ) False = pure Authorized
   isAuthorized (AuthR   _      ) _     = pure Authorized

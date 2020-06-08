@@ -5,7 +5,16 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
 
-module Handler.Projects where
+module Handler.Projects
+  ( getProjectEditR
+  , postProjectEditR
+  , postProjectLivenessR
+  , getProjectNewR
+  , postProjectNewR
+  , getProjectsR
+  , getOldProjectsR
+  )
+where
 
 import           Common
 import           Import
@@ -183,4 +192,3 @@ getProjectsR = do
 
 getOldProjectsR :: Handler Html
 getOldProjectsR = redirect ProjectsR
-
