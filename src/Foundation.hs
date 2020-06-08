@@ -32,27 +32,24 @@ data App = App
     , appLogger      :: Logger
     }
 
-screenshotFile :: App -> String -> FilePath
-screenshotFile master name =
-  (unpack . uploadDir . appSettings $ master) </> "screenshot" </> name
-
-binFile :: App -> String -> FilePath
-binFile master name =
-  (unpack . uploadDir . appSettings $ master) </> "bin" </> name
-
-srcFile :: App -> String -> FilePath
-srcFile master name =
-  (unpack . uploadDir . appSettings $ master) </> "src" </> name
-
 screenshotDir :: App -> FilePath
 screenshotDir master =
-  (unpack . uploadDir . appSettings $ master) </> "screenshot"
+  (unpack . uploadDir . appSettings $ master) </> "screenshots"
+
+screenshotFile :: App -> String -> FilePath
+screenshotFile master name = screenshotDir master </> name
 
 binDir :: App -> FilePath
 binDir master = (unpack . uploadDir . appSettings $ master) </> "bin"
 
+binFile :: App -> String -> FilePath
+binFile master name = binDir master </> name
+
 srcDir :: App -> FilePath
 srcDir master = (unpack . uploadDir . appSettings $ master) </> "src"
+
+srcFile :: App -> String -> FilePath
+srcFile master name = srcDir master </> name
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:

@@ -52,11 +52,12 @@ postUploadR target = do
 getUploadFileR :: UploadTarget -> Text -> Handler Html
 getUploadFileR target filename = do
   app <- getYesod
-  case target of
-    UploadBin -> sendFile typeOctet (binFile app $ unpack filename)
-    UploadSrc -> sendFile typeOctet (srcFile app $ unpack filename)
-    UploadScreenshot ->
-      sendFile typeOctet (screenshotFile app $ unpack filename)
+  let realFileName = case target of
+        UploadBin        -> binFile app (unpack filename)
+        UploadSrc        -> srcFile app (unpack filename)
+        UploadScreenshot -> screenshotFile app (unpack filename)
+  exists <- liftIO (doesFileExist realFileName)
+  if exists then sendFile typeOctet realFileName else notFound
 
 deleteUploadFileR :: UploadTarget -> Text -> Handler Value
 deleteUploadFileR target filename = do

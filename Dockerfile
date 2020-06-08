@@ -30,6 +30,7 @@ COPY --from=0 /root/.local/bin/callumscode2 /callumscode2
 COPY static/ /static/
 ENV STATIC_DIR /static
 ENV PORT 80
+ENV IP_FROM_HEADER true
 EXPOSE 80
 ENTRYPOINT ["/callumscode2"] 
 

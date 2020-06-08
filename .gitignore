@@ -25,6 +25,7 @@ tags
 TAGS
 test_google_creds.sh
 uploads_backup
+uploads
 yesod-devel/
 config/client_session_key.aes
 .vscode
