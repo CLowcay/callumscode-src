@@ -17,7 +17,6 @@ import           Yesod.Auth.Dummy
 import           Yesod.Auth.OAuth2.Google
 import           Yesod.Core.Types               ( Logger )
 import           Yesod.Default.Util             ( addStaticContentExternal )
-import qualified Yesod.Auth.Message            as YAM
 import qualified Yesod.Core.Unsafe             as Unsafe
 
 -- | The foundation datatype for your application. This can be a good place to
@@ -162,13 +161,13 @@ isAdmin :: Handler AuthResult
 isAdmin = do
   mu   <- maybeAuthId
   site <- getYesod
-  let admin = adminEmail $ appSettings site
+  let admin = adminGoogleId $ appSettings site
 
   pure $ case mu of
     Nothing     -> AuthenticationRequired
     Just authId -> if authId == admin
       then Authorized
-      else Unauthorized "You do not have admin rights on the site"
+      else Unauthorized "You do not have admin rights on this site"
 
 -- How to run database actions.
 instance YesodPersist App where
@@ -204,14 +203,9 @@ instance YesodAuth App where
       $(widgetFile "auth")
 
   authenticate creds = do
-    site <- getYesod
-    let admin  = adminGoogleId $ appSettings site
     let authId = credsIdent creds
-    if authId == admin
-      then do
-        setSession "_ID" authId
-        pure $ Authenticated authId
-      else pure $ UserError YAM.UserName
+    setSession "_ID" authId
+    pure $ Authenticated authId
 
 -- This instance is required to use forms. You can modify renderMessage to
 -- achieve customized and internationalized form validation messages.
