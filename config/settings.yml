@@ -36,6 +36,7 @@ copyright: © Callum Lowcay
 
 googleClientId: "_env:GOOGLE_CLIENT_ID:."
 googleClientSecret: "_env:GOOGLE_CLIENT_SECRET:."
+adminGoogleId: "_env:ADMIN_GOOGLE_ID:."
 
 noreplyEmail: "_env:NOREPLY_EMAIL:."
 adminEmail: "_env:ADMIN_EMAIL:."

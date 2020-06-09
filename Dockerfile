@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:20.04
 
 # Install needed packages
 RUN apt-get update && \
@@ -25,7 +25,11 @@ RUN wget -qO- https://get.haskellstack.org/ | sh && \
 COPY . .
 RUN stack build --copy-bins
 
-FROM ubuntu:latest
+FROM ubuntu:20.04
+
+RUN apt-get update && \
+	apt-get install -y ca-certificates
+
 COPY --from=0 /root/.local/bin/callumscode2 /callumscode2
 COPY static/ /static/
 ENV STATIC_DIR /static
@@ -33,4 +37,3 @@ ENV PORT 80
 ENV IP_FROM_HEADER true
 EXPOSE 80
 ENTRYPOINT ["/callumscode2"] 
-

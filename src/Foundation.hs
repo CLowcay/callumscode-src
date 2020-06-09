@@ -205,7 +205,7 @@ instance YesodAuth App where
 
   authenticate creds = do
     site <- getYesod
-    let admin  = adminEmail $ appSettings site
+    let admin  = adminGoogleId $ appSettings site
     let authId = credsIdent creds
     if authId == admin
       then do

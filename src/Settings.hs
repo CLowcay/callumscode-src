@@ -65,6 +65,7 @@ data AppSettings = AppSettings
 
     , googleClientId            :: Text
     , googleClientSecret        :: Text
+    , adminGoogleId             :: Text
     , noreplyEmail              :: Text
     , adminEmail                :: Text
     , awsKey                    :: Text
@@ -106,6 +107,7 @@ instance FromJSON AppSettings where
     appAuthDummyLogin         <- o .:? "auth-dummy-login" .!= defaultDev
     googleClientId            <- o .:  "googleClientId"
     googleClientSecret        <- o .:  "googleClientSecret"
+    adminGoogleId             <- o .:  "adminGoogleId"
 
     noreplyEmail              <- o .:  "noreplyEmail"
     adminEmail                <- o .:  "adminEmail"
