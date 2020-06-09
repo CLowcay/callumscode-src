@@ -29,6 +29,7 @@ import Network.Wai (Middleware)
 import Network.Wai.Handler.Warp             (Settings, defaultSettings, defaultShouldDisplayException, runSettings, setHost, setOnException, setPort)
 import Network.Wai.Middleware.RequestLogger (Destination (Logger), IPAddrSource (..), OutputFormat (..), destination, mkRequestLogger, outputFormat)
 import System.Log.FastLogger                (defaultBufSize, newStdoutLoggerSet, toLogStr)
+import qualified Network.Wai.Middleware.Gzip as Gzip
 
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
@@ -79,8 +80,9 @@ makeApplication :: App -> IO Application
 makeApplication foundation = do
     logWare <- makeLogWare foundation
     -- Create the WAI application and apply middlewares
+    let gzip = Gzip.gzip Gzip.def {Gzip.gzipFiles = Gzip.GzipCompress}
     appPlain <- toWaiAppPlain foundation
-    pure $ logWare $ defaultMiddlewaresNoLogging appPlain
+    pure . gzip . logWare . defaultMiddlewaresNoLogging $ appPlain
 
 makeLogWare :: App -> IO Middleware
 makeLogWare foundation =
@@ -94,7 +96,6 @@ makeLogWare foundation =
                             else FromSocket)
         , destination = Logger $ loggerSet $ appLogger foundation
         }
-
 
 -- | Warp settings for the given foundation value.
 warpSettings :: App -> Settings
