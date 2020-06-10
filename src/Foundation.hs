@@ -7,6 +7,7 @@
 
 module Foundation where
 
+import           Control.Lens
 import           Database.Persist.Sql           ( ConnectionPool
                                                 , runSqlPool
                                                 )
@@ -17,6 +18,7 @@ import           Yesod.Auth.Dummy
 import           Yesod.Auth.OAuth2.Google
 import           Yesod.Core.Types               ( Logger )
 import           Yesod.Default.Util             ( addStaticContentExternal )
+import qualified Network.AWS                   as AWS
 import qualified Yesod.Core.Unsafe             as Unsafe
 
 -- | The foundation datatype for your application. This can be a good place to
@@ -29,6 +31,7 @@ data App = App
     , appConnPool    :: ConnectionPool -- ^ Database connection pool.
     , appHttpManager :: Manager
     , appLogger      :: Logger
+    , appAWS         :: AWS.Env
     }
 
 screenshotDir :: App -> FilePath
@@ -66,6 +69,9 @@ mkYesodData "App" $(parseRoutesFile "config/routes")
 
 -- | A convenient synonym for creating forms.
 type Form x = Html -> MForm (HandlerFor App) (FormResult x, Widget)
+
+instance AWS.HasEnv App where
+  environment = lens appAWS (\x a -> x { appAWS = a })
 
 -- Please see the documentation for the Yesod typeclass. There are a number
 -- of settings which can be configured by overriding methods here.
@@ -105,7 +111,14 @@ instance Yesod App where
     withUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet")
 
   errorHandler errorResponse = fmap toTypedContent . defaultLayout $ do
-    setTitle . toHtml . show $ errorResponse
+    setTitle $ case errorResponse of
+      NotFound           -> "Not found"
+      InternalError _    -> "Internal error"
+      InvalidArgs   _    -> "Invalid arguments"
+      NotAuthenticated   -> "Not authenticated"
+      PermissionDenied _ -> "Permission denied"
+      BadMethod        _ -> "Bad method"
+    $logError (pack (show errorResponse))
     $(widgetFile "error")
     where formatArgs = intercalate "/"
 

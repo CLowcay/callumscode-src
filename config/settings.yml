@@ -41,8 +41,4 @@ adminGoogleId: "_env:ADMIN_GOOGLE_ID:."
 noreplyEmail: "_env:NOREPLY_EMAIL:."
 adminEmail: "_env:ADMIN_EMAIL:."
 
-awsKey: "_env:AWS_SECRET_KEY_ID:."
-awsSecret: "_env:AWS_SECRET_ACCESS_KEY:."
-awsRegion: "_env:AWS_DEFAULT_REGION:."
-
 uploadDir: "_env:UPLOAD_DIR:uploads_backup"

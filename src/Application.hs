@@ -15,7 +15,8 @@ module Application
     , makeLogWare
     ) where
 
-import Control.Monad.Logger                 (liftLoc, runLoggingT)
+import Control.Lens
+import Control.Monad.Logger                 (liftLoc, defaultLoc, runLoggingT)
 import Database.Persist.Sqlite              (createSqlitePool, runSqlPool, sqlDatabase, sqlPoolSize)
 import Handler.Blog
 import Handler.Common
@@ -30,6 +31,7 @@ import Network.Wai.Handler.Warp             (Settings, defaultSettings, defaultS
 import Network.Wai.Middleware.RequestLogger (Destination (Logger), IPAddrSource (..), OutputFormat (..), destination, mkRequestLogger, outputFormat)
 import System.Log.FastLogger                (defaultBufSize, newStdoutLoggerSet, toLogStr)
 import qualified Network.Wai.Middleware.Gzip as Gzip
+import qualified Network.AWS                 as AWS
 
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
@@ -50,6 +52,8 @@ makeFoundation appSettings = do
         (if appMutableStatic appSettings then staticDevel else static)
         (appStaticDir appSettings)
 
+    awsEnv <- AWS.newEnv AWS.Discover
+
     -- We need a log function to create a connection pool. We need a connection
     -- pool to create our foundation. And we need our foundation to get a
     -- logging function. To get out of this loop, we initially create a
@@ -61,6 +65,12 @@ makeFoundation appSettings = do
         -- https://ocharles.org.uk/blog/posts/2014-12-04-record-wildcards.html
         tempFoundation = mkFoundation $ error "connPool forced in tempFoundation"
         logFunc = messageLoggerSource tempFoundation appLogger
+        awsLogger logLevel builder = logFunc
+          defaultLoc "AWS"
+          (awsLogLevelToYesodLogLevel logLevel)
+          (toLogStr builder)
+        appAWS = awsEnv & AWS.envManager .~ appHttpManager
+                        & AWS.envLogger .~ awsLogger
 
     -- Create the database connection pool
     pool <- flip runLoggingT logFunc $ createSqlitePool
@@ -73,6 +83,13 @@ makeFoundation appSettings = do
 
     -- Return the foundation
     pure $ mkFoundation pool
+
+  where
+    awsLogLevelToYesodLogLevel awsLogLevel = case awsLogLevel of
+      AWS.Info -> LevelInfo
+      AWS.Error -> LevelError
+      AWS.Debug -> LevelDebug
+      AWS.Trace -> LevelDebug
 
 -- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and
 -- applying some additional middlewares.

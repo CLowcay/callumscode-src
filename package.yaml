@@ -3,6 +3,8 @@ version: "0.2.0"
 
 dependencies:
 - aeson
+- amazonka
+- amazonka-ses
 - base
 - blaze-html
 - blaze-markup
@@ -22,8 +24,7 @@ dependencies:
 - hjsmin
 - http-client-tls
 - http-conduit
-- mime-mail
-- mime-mail-ses
+- lens
 - monad-control
 - monad-logger
 - persistent

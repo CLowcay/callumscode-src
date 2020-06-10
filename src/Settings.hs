@@ -68,16 +68,8 @@ data AppSettings = AppSettings
     , adminGoogleId             :: Text
     , noreplyEmail              :: Text
     , adminEmail                :: Text
-    , awsKey                    :: Text
-    , awsSecret                 :: Text
-    , awsRegion                 :: Text
     , uploadDir                 :: Text
     }
-
--- convertNullsToStrings :: Value -> Value
--- convertNullsToStrings Null       = String ""
--- convertNullsToStrings (Object o) = Object $ fmap convertNullsToStrings o
--- convertNullsToStrings x          = x
 
 instance FromJSON AppSettings where
   parseJSON = withObject "AppSettings" $ \o -> do
@@ -112,9 +104,6 @@ instance FromJSON AppSettings where
     noreplyEmail              <- o .:  "noreplyEmail"
     adminEmail                <- o .:  "adminEmail"
 
-    awsKey                    <- o .:  "awsKey"
-    awsSecret                 <- o .:  "awsSecret"
-    awsRegion                 <- o .:  "awsRegion"
     uploadDir                 <- o .:  "uploadDir"
 
     pure AppSettings {..}

@@ -10,9 +10,11 @@ module Handler.Contact
   )
 where
 
+import           Control.Lens
 import           Import
-import           Network.Mail.Mime
-import           Network.Mail.Mime.SES
+import           Network.AWS
+import           Network.AWS.SES.SendEmail
+import           Network.AWS.SES.Types
 
 data EmailData = EmailData {
   emailFrom :: Maybe Text,
@@ -39,31 +41,25 @@ getContactR = do
 
 postContactR :: Handler Html
 postContactR = do
-  master                      <- getYesod
+  master <- getYesod
+  let settings = appSettings master
   messages                    <- getMessages
   ((result, widget), enctype) <- runFormPost emailForm
   case result of
     FormSuccess r -> do
-      let header = maybe "" (\e -> "REPLY TO: " <> e <> "\n\n") $ emailFrom r
-          mail   = simpleMail'
-            (Address Nothing (noreplyEmail $ appSettings master))
-            (Address Nothing (adminEmail $ appSettings master))
-            ("[CC/CONTACT] " <> emailSubject r)
-            (fromStrict $ header <> unTextarea (emailMessage r))
-          ses = SES
-            { sesFrom         = encodeUtf8 . noreplyEmail $ appSettings master
-            , sesTo           = [encodeUtf8 . adminEmail $ appSettings master]
-            , sesAccessKey    = encodeUtf8 . awsKey $ appSettings master
-            , sesSecretKey    = encodeUtf8 . awsSecret $ appSettings master
-            , sesSessionToken = Nothing
-            , sesRegion       = awsRegion $ appSettings master
-            }
+      (void . runResourceT . runAWS master . send)
+        $ sendEmail
+            (noreplyEmail settings)
+            (destination & dToAddresses .~ [adminEmail settings])
+            (message
+              (content ("[CC/CONTACT] " <> emailSubject r))
+              (body & bText .~ (Just . content . unTextarea $ emailMessage r))
+            )
+        & (maybe id ((seReplyToAddresses .~) . pure) (emailFrom r))
 
-      renderSendMailSES (appHttpManager master) ses mail
       addMessage "message-success" "Your message has been sent"
       redirect ContactR
 
     _ -> defaultLayout $ do
       setTitle "Callum's Code - contact"
       $(widgetFile "contact")
-
