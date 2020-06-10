@@ -18,7 +18,6 @@ editorWidget mDoneRoute isNewPage = do
   addStylesheetRemote
     "//cdn.jsdelivr.net/medium-editor/latest/css/medium-editor.min.css"
   addStylesheet $ StaticR css_medium_theme_css
-  addScript $ StaticR js_jquery_3_2_1_min_js
   addScript $ StaticR js_editor_js
 
   toWidgetBody [hamlet|

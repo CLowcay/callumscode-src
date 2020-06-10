@@ -131,7 +131,6 @@ getBlogR year month name = do
 
   defaultLayout $ do
     atomLink FeedR "RSS"
-    addScript $ StaticR js_jquery_3_2_1_min_js
 
     when auth $ addScript $ StaticR js_liveness_js
 
@@ -188,7 +187,6 @@ getBlogNewR = do
   morePosts <- getAllPosts auth
 
   defaultLayout $ do
-    addScript $ StaticR js_jquery_3_2_1_min_js
     addScript $ StaticR js_liveness_js
 
     let editMode   = True

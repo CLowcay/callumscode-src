@@ -49,9 +49,9 @@ dirField = fmap (selectFieldList . fmap option) . liftIO . listDirectory
 softwareForm :: Maybe Software -> Form Software
 softwareForm mSoft html = do
   app             <- getYesod
-  linkField       <- lift . dirField . binDir $ app
-  linkSrcField    <- lift . dirField . srcDir $ app
-  screenshotField <- lift . dirField . screenshotDir $ app
+  linkField       <- lift . dirField $ binDir app
+  linkSrcField    <- lift . dirField $ srcDir app
+  screenshotField <- lift . dirField $ screenshotDir app
 
   let
     form =
@@ -68,7 +68,10 @@ softwareForm mSoft html = do
         <*> aopt screenshotField
                  screenshotFieldSettings
                  (softwareScreenshot <$> mSoft)
-        <*> (Markdown <$> areq textField "Description" (unMarkdown . softwareDescription <$> mSoft))
+        <*> (Markdown <$> areq textField
+                               "Description"
+                               (unMarkdown . softwareDescription <$> mSoft)
+            )
 
   form html
  where
@@ -88,32 +91,26 @@ softwareForm mSoft html = do
 projectEditWidget :: Widget -> Enctype -> Maybe Software -> Route App -> Widget
 projectEditWidget widget enctype item action = do
   app             <- getYesod
-  binFiles        <- liftIO . listDirectory . binDir $ app
-  srcFiles        <- liftIO . listDirectory . srcDir $ app
-  screenshotFiles <- liftIO . listDirectory . screenshotDir $ app
-
-  addScript $ StaticR js_jquery_3_2_1_min_js
-  addScript $ StaticR js_jquery_ui_widget_js
-  addScript $ StaticR js_jquery_iframe_transport_js
-  addScript $ StaticR js_jquery_fileupload_js
+  binFiles        <- liftIO . listDirectory $ binDir app
+  srcFiles        <- liftIO . listDirectory $ srcDir app
+  screenshotFiles <- liftIO . listDirectory $ screenshotDir app
 
   setTitle
-    $  "Callum's Code - "
-    ++ maybe "New project" (toHtml . softwareName) item
+    ("Callum's Code - " ++ maybe "New project" (toHtml . softwareName) item)
   $(widgetFile "projectEdit")
 
 -- Editor pages
 getProjectEditR :: Text -> Handler Html
 getProjectEditR url = do
-  Entity _ item     <- runDB . getBy404 $ UniqueSoftware url
-  (widget, enctype) <- generateFormPost $ softwareForm (Just item)
+  Entity _ item     <- runDB $ getBy404 (UniqueSoftware url)
+  (widget, enctype) <- generateFormPost (softwareForm (Just item))
   defaultLayout
-    $ projectEditWidget widget enctype (Just item) (ProjectEditR url)
+    (projectEditWidget widget enctype (Just item) (ProjectEditR url))
 
 postProjectEditR :: Text -> Handler Html
 postProjectEditR url = do
-  Entity itemId item          <- runDB . getBy404 $ UniqueSoftware url
-  ((result, widget), enctype) <- runFormPost $ softwareForm Nothing
+  Entity itemId item          <- runDB $ getBy404 (UniqueSoftware url)
+  ((result, widget), enctype) <- runFormPost (softwareForm Nothing)
   case result of
     FormSuccess r -> do
       now <- liftIO getCurrentTime
@@ -129,51 +126,49 @@ postProjectEditR url = do
         , SoftwareDescription =. softwareDescription r
         , SoftwareLastUpdate =. now
         ]
-      redirect $ ProjectsR :#: url
+      redirect (ProjectsR :#: url)
 
     _ -> defaultLayout
-      $ projectEditWidget widget enctype (Just item) (ProjectEditR url)
+      (projectEditWidget widget enctype (Just item) (ProjectEditR url))
 
 postProjectLivenessR :: Text -> Handler Value
 postProjectLivenessR url = do
   live            <- runInputPost $ ireq checkBoxField "live"
-  Entity itemId _ <- runDB . getBy404 $ UniqueSoftware url
+  Entity itemId _ <- runDB $ getBy404 (UniqueSoftware url)
   runDB $ update itemId [SoftwareLive =. live]
-  pure $ object ["live" .= live]
+  pure (object ["live" .= live])
 
 -- New page
 getProjectNewR :: Handler Html
 getProjectNewR = do
-  (widget, enctype) <- generateFormPost $ softwareForm Nothing
-  defaultLayout $ projectEditWidget widget enctype Nothing ProjectNewR
+  (widget, enctype) <- generateFormPost (softwareForm Nothing)
+  defaultLayout (projectEditWidget widget enctype Nothing ProjectNewR)
 
 postProjectNewR :: Handler Html
 postProjectNewR = do
-  ((result, widget), enctype) <- runFormPost $ softwareForm Nothing
+  ((result, widget), enctype) <- runFormPost (softwareForm Nothing)
   case result of
     FormSuccess r -> do
-      let url0 = mkURL $ softwareName r
+      let url0 = mkURL (softwareName r)
       mr <- runDB $ selectFirst [SoftwareUrl ==. url0] [Desc SoftwareUrl]
       let url = case mr of
             Nothing              -> url0
             Just (Entity _ item) -> adjustURL (softwareUrl item) url0
 
       _ <- runDB $ insert (r { softwareUrl = url, softwareLive = False })
-      redirect $ ProjectsR :#: url
+      redirect (ProjectsR :#: url)
 
-    _ -> defaultLayout $ projectEditWidget widget enctype Nothing ProjectNewR
+    _ -> defaultLayout (projectEditWidget widget enctype Nothing ProjectNewR)
 
 -- Regular project pages
 getProjectsR :: Handler Html
 getProjectsR = do
-  auth     <- (== Authorized) <$> isAdmin
+  auth     <- isAdmin <&> (== Authorized)
   projects <- categorize
     <$> runDB (selectList (filterProjects auth) [Desc SoftwareLastUpdate])
 
   defaultLayout $ do
-    when auth $ do
-      addScript $ StaticR js_jquery_3_2_1_min_js
-      addScript $ StaticR js_liveness_js
+    when auth $ addScript (StaticR js_liveness_js)
 
     setTitle "Callum's Code - projects"
     $(widgetFile "projects")
@@ -186,6 +181,7 @@ getProjectsR = do
   lbDescription
     = "Liberty BASIC is an interpreted BASIC which had a strong community some years ago.  I used it to get into Windows programming (previously I'd been using QBasic under DOS).  These programs are very old now and I'm not even sure they'd still run under the latest versions of Liberty BASIC."
   projectSummary auth item = $(widgetFile "projectSummary")
+
   categoryProjects :: Bool -> Text -> Text -> [Software] -> Widget
   categoryProjects auth catName catDescription catData =
     $(widgetFile "projectCat")
