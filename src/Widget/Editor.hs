@@ -121,4 +121,3 @@ editorWidget mDoneRoute isNewPage = do
             addLanguageDropdown(languages);
           });
       |]
-

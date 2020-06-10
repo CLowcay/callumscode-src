@@ -221,4 +221,3 @@ postBlogNewR = do
         }
       redirect (BlogR year month url, [("edit" :: Text, "")])
     Nothing -> error "Today is an invalid date!!!"
-

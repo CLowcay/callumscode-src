@@ -73,4 +73,3 @@ deleteUploadFileR target filename = do
         UploadScreenshot -> screenshotFile app (unpack filename)
   liftIO $ removeFile filePath
   pure $ object ["files" .= [object [filename .= True]]]
-

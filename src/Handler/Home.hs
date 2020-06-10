@@ -77,4 +77,3 @@ postPlainPageR page = do
     $ update pageId [PlainPageContent =. content, PlainPageTimeUpdated =. now]
 
   pure ()
-

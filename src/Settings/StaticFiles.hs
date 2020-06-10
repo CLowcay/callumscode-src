@@ -22,4 +22,3 @@ import           Yesod.Static                   ( staticFiles )
 --
 --     StaticFile ["js", "script.js"] []
 staticFiles (appStaticDir compileTimeAppSettings)
-
