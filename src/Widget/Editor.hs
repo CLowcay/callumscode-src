@@ -45,7 +45,7 @@ editorWidget mDoneRoute isNewPage = do
       'scala'
     ];
 
-    onReady.push(function() {
+    onReady.push(() => {
       addLanguageDropdown(languages);
 
       const titleEditor = new MediumEditor('#title', {
@@ -66,11 +66,11 @@ editorWidget mDoneRoute isNewPage = do
 
       const save = document.getElementById('save');
 
-      titleEditor.subscribe('editableInput', function(data, editable) {
+      titleEditor.subscribe('editableInput', (data, editable) => {
         save.innerHTML = "Save";
         save.disabled = false;
       });
-      mainEditor.subscribe('editableInput', function(data, editable) {
+      mainEditor.subscribe('editableInput', (data, editable) => {
         save.innerHTML = "Save";
         save.disabled = false;
       });
@@ -82,41 +82,39 @@ editorWidget mDoneRoute isNewPage = do
  where
   saveButtonWidget = if isNewPage
     then [julius|
-        save.addEventListener("click",
-          function(event) {
-            const title = document.createElement('input');
-            title.name = 'title';
-            title.type = 'text';
-            title.value = titleEditor.getContent();
+        save.addEventListener('click', () =>{
+          const title = document.createElement('input');
+          title.name = 'title';
+          title.type = 'text';
+          title.value = titleEditor.getContent();
 
-            const content = document.createElement('input');
-            content.name = 'content';
-            content.type = 'text';
-            content.value = mainEditor.getContent();
+          const content = document.createElement('input');
+          content.name = 'content';
+          content.type = 'text';
+          content.value = mainEditor.getContent();
 
-            const form = document.createElement('form');
-            form.method = 'post';
-            form.appendChild(title);
-            form.appendChild(content);
-            form.style.visibility = 'hidden'
-            
-            document.body.appendChild(form);
+          const form = document.createElement('form');
+          form.method = 'post';
+          form.appendChild(title);
+          form.appendChild(content);
+          form.style.visibility = 'hidden'
+          
+          document.body.appendChild(form);
 
-            form.submit();
-          });
+          form.submit();
+        });
       |]
     else [julius|
-        save.addEventListener("click",
-          function(event) {
-            removeLanguageDropdowns();
-            $.post(
-              window.location.href, {
-                title: titleEditor.getContent(),
-                content: mainEditor.getContent()
-              }, function (data, stat, req) {
-                save.innerHTML = "Saved";
-                save.disabled = true;
-              });
-            addLanguageDropdown(languages);
-          });
+        save.addEventListener('click', async () => {
+          removeLanguageDropdowns();
+          const body = new FormData();
+          body.append('title', titleEditor.getContent());
+          body.append('content', mainEditor.getContent());
+          const response = await fetch(window.location.href, { method: 'POST', body: body });
+          if (response.ok) {
+            save.innerHTML = 'Saved';
+            save.disabled = true;
+          }
+          addLanguageDropdown(languages);
+        });
       |]

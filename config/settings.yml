@@ -44,4 +44,4 @@ recaptchaSecretKey: "_env:RECAPTCHA_SECRET_KEY:."
 noreplyEmail: "_env:NOREPLY_EMAIL:."
 adminEmail: "_env:ADMIN_EMAIL:."
 
-uploadDir: "_env:UPLOAD_DIR:uploads_backup"
+uploadDir: "_env:UPLOAD_DIR:uploads"
