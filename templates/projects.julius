@@ -25,8 +25,8 @@ function updateStickyMenu() {
       stickyMenu.style.position = 'static';
       isSticky = false;
     }
-  } else if ((!isSticky) && (stickyPos.y < stickyTopMargin) &&
-    (window.innerHeight > (stickyPos.h + bottomAllowance))
+  } else if (!isSticky && stickyPos.y < stickyTopMargin &&
+    window.innerHeight > (stickyPos.h + bottomAllowance)
   ) {
     stickyMenu.style.position = 'fixed';
     stickyMenu.style.top = stickyTopMargin + 'px';
