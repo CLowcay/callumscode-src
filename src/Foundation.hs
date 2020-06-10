@@ -16,6 +16,7 @@ import           Text.Hamlet                    ( hamletFile )
 import           Text.Jasmine                   ( minifym )
 import           Yesod.Auth.Dummy
 import           Yesod.Auth.OAuth2.Google
+import           Yesod.ReCaptcha2
 import           Yesod.Core.Types               ( Logger )
 import           Yesod.Default.Util             ( addStaticContentExternal )
 import qualified Network.AWS                   as AWS
@@ -188,8 +189,14 @@ instance YesodPersist App where
   runDB action = do
     master <- getYesod
     runSqlPool action $ appConnPool master
+
 instance YesodPersistRunner App where
   getDBRunner = defaultGetDBRunner appConnPool
+
+instance YesodReCaptcha App where
+  reCaptchaSiteKey   = recaptchaSiteKey . appSettings <$> getYesod
+  reCaptchaSecretKey = recaptchaSecretKey . appSettings <$> getYesod
+  reCaptchaLanguage  = pure Nothing
 
 instance YesodAuth App where
   type AuthId App = Text

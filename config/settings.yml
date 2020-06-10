@@ -38,6 +38,9 @@ googleClientId: "_env:GOOGLE_CLIENT_ID:."
 googleClientSecret: "_env:GOOGLE_CLIENT_SECRET:."
 adminGoogleId: "_env:ADMIN_GOOGLE_ID:."
 
+recaptchaSiteKey: "_env:RECAPTCHA_SITE_KEY:."
+recaptchaSecretKey: "_env:RECAPTCHA_SECRET_KEY:."
+
 noreplyEmail: "_env:NOREPLY_EMAIL:."
 adminEmail: "_env:ADMIN_EMAIL:."
 

@@ -49,6 +49,7 @@ dependencies:
 - yesod-core
 - yesod-form
 - yesod-newsfeed
+- yesod-recaptcha2
 - yesod-static
 
 ghc-options:

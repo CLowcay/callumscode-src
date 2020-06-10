@@ -18,6 +18,13 @@ packages:
       sha256: 1c2901e88e82128b1e7f46e4b58eaeec779a630f0e30eb8bc226cb8ebb521bf8
   original:
     hackage: hoauth2-1.8.9
+- completed:
+    hackage: yesod-recaptcha2-1.0.0@sha256:ebea8f043a7660fd9e19065a9f53796bdd3c3183c457e9c0a5a9feab48ff8c4c,1231
+    pantry-tree:
+      size: 272
+      sha256: 298a4b70ff610ce459c5119ba29970180ad6ced271a8001f28302724b27e022b
+  original:
+    hackage: yesod-recaptcha2-1.0.0
 snapshots:
 - completed:
     size: 496111

@@ -68,6 +68,8 @@ data AppSettings = AppSettings
     , adminGoogleId             :: Text
     , noreplyEmail              :: Text
     , adminEmail                :: Text
+    , recaptchaSiteKey          :: Text
+    , recaptchaSecretKey        :: Text
     , uploadDir                 :: Text
     }
 
@@ -100,6 +102,9 @@ instance FromJSON AppSettings where
     googleClientId            <- o .:  "googleClientId"
     googleClientSecret        <- o .:  "googleClientSecret"
     adminGoogleId             <- o .:  "adminGoogleId"
+
+    recaptchaSiteKey          <- o .:  "recaptchaSiteKey"
+    recaptchaSecretKey        <- o .:  "recaptchaSecretKey"
 
     noreplyEmail              <- o .:  "noreplyEmail"
     adminEmail                <- o .:  "adminEmail"

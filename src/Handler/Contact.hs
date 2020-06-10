@@ -15,6 +15,7 @@ import           Import
 import           Network.AWS
 import           Network.AWS.SES.SendEmail
 import           Network.AWS.SES.Types
+import           Yesod.ReCaptcha2
 
 data EmailData = EmailData {
   emailFrom :: Maybe Text,
@@ -29,11 +30,18 @@ emailForm =
     <$> aopt emailField "Your email address" Nothing
     <*> areq textField     "Subject" Nothing
     <*> areq textareaField "Message" Nothing
+    <*  reCaptchaInvisible
 
 getContactR :: Handler Html
 getContactR = do
   (widget, enctype) <- generateFormPost emailForm
   messages          <- getMessages
+  renderContactForm widget enctype messages
+
+renderContactForm :: Widget -> Enctype -> [(Text, Html)] -> Handler Html
+renderContactForm widget enctype messages = do
+  (reCaptchaFormId, reCaptchaWidget, reCaptchaButtonAttributes) <-
+    reCaptchaInvisibleForm Nothing Nothing
 
   defaultLayout $ do
     setTitle "Callum's Code - contact"
@@ -60,6 +68,4 @@ postContactR = do
       addMessage "message-success" "Your message has been sent"
       redirect ContactR
 
-    _ -> defaultLayout $ do
-      setTitle "Callum's Code - contact"
-      $(widgetFile "contact")
+    _ -> renderContactForm widget enctype messages
