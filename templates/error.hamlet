@@ -18,4 +18,3 @@
     $of BadMethod method
       <h1>Method not allowed
       <p>You cannot #{show method} this resource.
-

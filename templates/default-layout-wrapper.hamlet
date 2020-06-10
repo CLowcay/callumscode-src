@@ -41,4 +41,3 @@ $newline never
           <li>
             <a href=@{AboutR} draggable=false>ABOUT
     ^{pageBody pc}
-

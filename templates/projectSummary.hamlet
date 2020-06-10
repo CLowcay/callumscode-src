@@ -10,7 +10,6 @@
       $else
         <input .liveness type=checkbox id=live-#{softwareUrl item} name=live data-url=@{ProjectLivenessR (softwareUrl item)}>
 
-
     $if auth
       <label for=live-#{softwareUrl item}>
         <a .title-link href=##{softwareUrl item}>#{softwareName item}

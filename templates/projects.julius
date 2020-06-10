@@ -15,7 +15,6 @@ let isSticky = false;
 const stickyTopMargin = 0;
 const bottomAllowance = 128;
 
-
 function updateStickyMenu() {
   const spos = getWindowPos(document.querySelector('.sidebar'));
   const stickyMenu = document.getElementById('sticky-menu');
@@ -38,4 +37,3 @@ function updateStickyMenu() {
 
 window.addEventListener('scroll', updateStickyMenu);
 window.addEventListener('resize', updateStickyMenu);
-

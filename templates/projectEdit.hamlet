@@ -41,4 +41,3 @@
     <input type=file accept=image/* #screenshot-file name=file data-url=@{UploadR UploadScreenshot}>
 
   <p>&nbsp;
-

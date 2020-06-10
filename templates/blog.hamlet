@@ -55,4 +55,3 @@
 
           $else
             <a href="@{BlogR (blogPostYear post) (blogPostMonth post) (blogPostUrl post)}">#{blogPostTitle post}
-

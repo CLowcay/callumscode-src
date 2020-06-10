@@ -3,4 +3,3 @@
   <p>#{catDescription}
   $forall item <- catData
     ^{projectSummary auth item}
-

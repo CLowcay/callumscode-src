@@ -41,4 +41,3 @@
       $forall item <- catLibertyBasic projects
         <li>
           <a .title-link href=##{softwareUrl item}>#{softwareName item}
-

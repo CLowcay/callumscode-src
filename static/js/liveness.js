@@ -1,4 +1,3 @@
-
 for (const liveness of document.querySelectorAll('.liveness')) {
   liveness.addEventListener("click", function (event) {
     $.post(
@@ -10,4 +9,3 @@ for (const liveness of document.querySelectorAll('.liveness')) {
     );
   });
 }
-

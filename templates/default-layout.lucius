@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Saira');
+@import url('https://fonts.googleapis.com/css?family=Saira&display=swap');
 
 @navFontHeight:14px;
 @buttonPaddingH:0.5em;
@@ -429,4 +429,3 @@ form {
   border-radius:0.2em;
   background-color:#ffb3b1;
 }
-
