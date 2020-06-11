@@ -32,12 +32,12 @@
 
   <p>
     <label for=bin-file>Upload bin file
-    <input type=file accept=application/zip,application/x-msdownload #bin-file name=file data-url=@{UploadR UploadBin}>
+    <input type=file accept=application/zip,application/x-msdownload name=file data-type=bin data-url=@{UploadR UploadBin}>
   <p>
     <label for=src-file>Upload src file
-    <input type=file accept=application/zip #src-file name=file data-url=@{UploadR UploadSrc}>
+    <input type=file accept=application/zip name=file data-type=src data-url=@{UploadR UploadSrc}>
   <p>
     <label for=screenshot-file>Upload screenshot
-    <input type=file accept=image/* #screenshot-file name=file data-url=@{UploadR UploadScreenshot}>
+    <input type=file accept=image/* name=file data-type=screenshot data-url=@{UploadR UploadScreenshot}>
 
   <p>&nbsp;

@@ -1,36 +1,45 @@
-function fileUploadOptions(type) {
-  return {
-    dataType: 'json',
-    done: function (e, data) {
-      $.each(data.result.files, function (index, file) {
-        $('#' + type + '-files')
-          .prepend('<option value="' + file.name +
-            '" data-url="' + file.deleteUrl + '">' + file.name + '</option>');
-        $('#' + type + '-field')
-          .prepend('<option value="' + file.name + '">' + file.name + '</option>')
-          .val(file.name);
-      });
-    }
-  };
-}
+onReady.push(() => {
+  for (const input of document.querySelectorAll('input[type=file]')) {
+    input.addEventListener('change', () => {
+      if (input.files.length > 0) {
+        const file = input.files[0];
+        const xhr = new XMLHttpRequest();
+        const form = new FormData();
+        form.append('file', file);
 
-onReady.push(function() {
-  $('#bin-file').fileupload(fileUploadOptions("bin"));
-  $('#src-file').fileupload(fileUploadOptions("src"));
-  $('#screenshot-file').fileupload(fileUploadOptions("screenshot"));
+        xhr.open('POST', input.getAttribute('data-url'));
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.error) {
+              alert(response.error);
+            } else {
+              const option = new Option(response.name, response.name);
+              option.setAttribute('data-url', response.deleteUrl);
 
-  $('#delete-button').click(function (event) {
-    $('#all-files').find(':selected').each(function () {
-      const name = $(this).attr('value');
-      const url = $(this).attr('data-url');
-      $.ajax(url, {
-        method: "DELETE",
-        success: function(data, stat, jqXHR) {
-          for (const file of data.files) {
-            if (file[name]) $('option[value="' + name + '"]').remove();
+              document
+                .querySelector('#' + input.getAttribute('data-type') + '-files')
+                .appendChild(option);
+            }
+          }
+        };
+        xhr.send(form);
+      }
+    });
+  }
+
+  document.querySelector('#delete-button').addEventListener('click', () => {
+    for (const selected of document.querySelectorAll('#all-files option:checked')) {
+      const name = selected.getAttribute('value');
+      const url = selected.getAttribute('data-url');
+      fetch(url, { method: 'DELETE' }).then(async response => {
+        if (response.ok) {
+          for (const file of (await response.json()).files) {
+            if (file[name])
+              document.querySelector('option[value="' + name + '"]').remove();
           }
         }
       });
-    });
+    }
   });
 });

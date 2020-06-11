@@ -19,7 +19,7 @@ postUploadR :: UploadTarget -> Handler Value
 postUploadR target = do
   app  <- getYesod
   info <- runInputPost $ ireq fileField "file"
-  let filePath = unpack $ fileName info
+  let filePath = unpack ( fileName info)
   let name = case target of
         UploadBin        -> binFile app filePath
         UploadSrc        -> srcFile app filePath
@@ -28,31 +28,18 @@ postUploadR target = do
   exists <- liftIO $ doesFileExist name
   if exists
     then pure $ object
-      [ "files"
-          .= [ object
+        
                  [ "name" .= fileName info
                  , "error" .= ("File already exists" :: Text)
                  ]
-             ]
-      ]
     else do
-      size <- liftIO $ do
-        fileMove info name
-        getFileSize name
-
+      liftIO $ fileMove info name
       render <- getUrlRender
 
       pure $ object
-        [ "files"
-            .= [ object
                    [ "name" .= fileName info
-                   , "size" .= size
-                   , "url" .= render (UploadFileR target (fileName info))
                    , "deleteUrl" .= render (UploadFileR target (fileName info))
-                   , "deleteType" .= ("DELETE" :: Text)
                    ]
-               ]
-        ]
 
 getUploadFileR :: UploadTarget -> Text -> Handler Html
 getUploadFileR target filename = do
