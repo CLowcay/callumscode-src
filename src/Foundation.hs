@@ -85,7 +85,7 @@ instance Yesod App where
 
   -- Store session data on the client in encrypted cookies,
   -- default session idle timeout is 120 minutes
-  makeSessionBackend _ = Just <$> envClientSessionBackend
+  makeSessionBackend _ = laxSameSiteSessions $ Just <$> envClientSessionBackend
     120    -- timeout in minutes
     "CLIENT_SESSION_KEY"
 
