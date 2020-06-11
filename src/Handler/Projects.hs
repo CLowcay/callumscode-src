@@ -68,9 +68,10 @@ softwareForm mSoft html = do
         <*> aopt screenshotField
                  screenshotFieldSettings
                  (softwareScreenshot <$> mSoft)
-        <*> (Markdown <$> areq textField
-                               "Description"
-                               (unMarkdown . softwareDescription <$> mSoft)
+        <*> (Markdown . unTextarea <$> areq
+              textareaField
+              "Description"
+              (Textarea . unMarkdown . softwareDescription <$> mSoft)
             )
 
   form html
