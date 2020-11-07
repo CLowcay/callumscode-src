@@ -1,8 +1,8 @@
 FROM ubuntu:20.04
 
 # Install needed packages
-RUN apt-get update && \
-	apt-get install -y locales wget unzip && \
+RUN apt update && \
+  apt install -y locales wget unzip && \
   locale-gen en_US.UTF-8
 
 # Set up UTF-8 locale
@@ -27,8 +27,8 @@ RUN stack build --copy-bins
 
 FROM ubuntu:20.04
 
-RUN apt-get update && \
-	apt-get install -y ca-certificates
+RUN apt update && \
+  apt install -y ca-certificates
 
 COPY --from=0 /root/.local/bin/callumscode2 /callumscode2
 COPY static/ /static/
