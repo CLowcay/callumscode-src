@@ -1,39 +1,42 @@
-{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module Foundation where
 
-import           Control.Lens
-import           Database.Persist.Sql           ( ConnectionPool
-                                                , runSqlPool
-                                                )
-import           Import.NoFoundation
-import           Text.Hamlet                    ( hamletFile )
-import           Text.Jasmine                   ( minifym )
-import           Yesod.Auth.Dummy
-import           Yesod.Auth.OAuth2.Google
-import           Yesod.ReCaptcha2
-import           Yesod.Core.Types               ( Logger )
-import           Yesod.Default.Util             ( addStaticContentExternal )
-import qualified Network.AWS                   as AWS
-import qualified Yesod.Core.Unsafe             as Unsafe
+import Control.Lens
+import Database.Persist.Sql
+  ( ConnectionPool,
+    runSqlPool,
+  )
+import Import.NoFoundation
+import qualified Network.AWS as AWS
+import Text.Hamlet (hamletFile)
+import Text.Jasmine (minifym)
+import Yesod.Auth.Dummy
+import Yesod.Auth.OAuth2.Google
+import Yesod.Core.Types (Logger)
+import qualified Yesod.Core.Unsafe as Unsafe
+import Yesod.Default.Util (addStaticContentExternal)
+import Yesod.ReCaptcha2
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
 -- starts running, such as database connections. Every handler will have
 -- access to the data present here.
 data App = App
-    { appSettings    :: AppSettings
-    , appStatic      :: Static -- ^ Settings for static file serving.
-    , appConnPool    :: ConnectionPool -- ^ Database connection pool.
-    , appHttpManager :: Manager
-    , appLogger      :: Logger
-    , appAWS         :: AWS.Env
-    }
+  { appSettings :: AppSettings,
+    -- | Settings for static file serving.
+    appStatic :: Static,
+    -- | Database connection pool.
+    appConnPool :: ConnectionPool,
+    appHttpManager :: Manager,
+    appLogger :: Logger,
+    appAWS :: AWS.Env
+  }
 
 screenshotDir :: App -> FilePath
 screenshotDir master =
@@ -72,22 +75,26 @@ mkYesodData "App" $(parseRoutesFile "config/routes")
 type Form x = Html -> MForm (HandlerFor App) (FormResult x, Widget)
 
 instance AWS.HasEnv App where
-  environment = lens appAWS (\x a -> x { appAWS = a })
+  environment = lens appAWS (\x a -> x {appAWS = a})
 
 -- Please see the documentation for the Yesod typeclass. There are a number
 -- of settings which can be configured by overriding methods here.
 instance Yesod App where
   -- Controls the base of generated URLs. For more information on modifying,
   -- see: https://github.com/yesodweb/yesod/wiki/Overriding-approot
-  approot = ApprootRequest $ \app req -> fromMaybe
-    (getApprootText guessApproot app req)
-    (appRoot $ appSettings app)
+  approot = ApprootRequest $ \app req ->
+    fromMaybe
+      (getApprootText guessApproot app req)
+      (appRoot $ appSettings app)
 
   -- Store session data on the client in encrypted cookies,
   -- default session idle timeout is 120 minutes
-  makeSessionBackend _ = laxSameSiteSessions $ Just <$> envClientSessionBackend
-    120    -- timeout in minutes
-    "CLIENT_SESSION_KEY"
+  makeSessionBackend _ =
+    laxSameSiteSessions $
+      Just
+        <$> envClientSessionBackend
+          120 -- timeout in minutes
+          "CLIENT_SESSION_KEY"
 
   -- Yesod Middleware allows you to run code before and after each handler function.
   -- The defaultYesodMiddleware adds the response header "Vary: Accept, Accept-Language" and performs authorization checks.
@@ -108,20 +115,21 @@ instance Yesod App where
     -- you to use normal widget features in default-layout.
 
     mauthId <- maybeAuthId
-    pc      <- widgetToPageContent $(widgetFile "default-layout")
+    pc <- widgetToPageContent $(widgetFile "default-layout")
     withUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet")
 
   errorHandler errorResponse = fmap toTypedContent . defaultLayout $ do
     setTitle $ case errorResponse of
-      NotFound           -> "Not found"
-      InternalError _    -> "Internal error"
-      InvalidArgs   _    -> "Invalid arguments"
-      NotAuthenticated   -> "Not authenticated"
+      NotFound -> "Not found"
+      InternalError _ -> "Internal error"
+      InvalidArgs _ -> "Invalid arguments"
+      NotAuthenticated -> "Not authenticated"
       PermissionDenied _ -> "Permission denied"
-      BadMethod        _ -> "Bad method"
+      BadMethod _ -> "Bad method"
     $logError (pack (show errorResponse))
     $(widgetFile "error")
-    where formatArgs = intercalate "/"
+    where
+      formatArgs = intercalate "/"
 
   -- This function creates static content files in the static folder
   -- and names them based on a hash of their content. This allows
@@ -130,58 +138,60 @@ instance Yesod App where
   addStaticContent ext mime content = do
     master <- getYesod
     let staticDir = appStaticDir $ appSettings master
-    addStaticContentExternal minifym
-                             genFileName
-                             staticDir
-                             (StaticR . flip StaticRoute [])
-                             ext
-                             mime
-                             content
+    addStaticContentExternal
+      minifym
+      genFileName
+      staticDir
+      (StaticR . flip StaticRoute [])
+      ext
+      mime
+      content
     where
       -- Generate a unique filename based on the content itself
-          genFileName lbs = "autogen-" ++ base64md5 lbs
+      genFileName lbs = "autogen-" ++ base64md5 lbs
 
   -- What messages should be logged. The following includes all messages when
   -- in development, and warnings and errors in production.
   shouldLogIO app _source level =
-    pure
-      $  appShouldLogAll (appSettings app)
-      || (level == LevelWarn)
-      || (level == LevelError)
+    pure $
+      appShouldLogAll (appSettings app)
+        || (level == LevelWarn)
+        || (level == LevelError)
 
   makeLogger = pure . appLogger
 
   authRoute _ = Just $ AuthR LoginR
 
-  isAuthorized FaviconR          False = pure Authorized
-  isAuthorized RobotsR           False = pure Authorized
-  isAuthorized HomeR             False = pure Authorized
-  isAuthorized FeedR             False = pure Authorized
-  isAuthorized (BlogOldR _)      False = pure Authorized
-  isAuthorized BlogHomeR         False = pure Authorized
-  isAuthorized BlogR{}           False = pure Authorized
-  isAuthorized ProjectsR         False = pure Authorized
-  isAuthorized OldProjectsR      False = pure Authorized
-  isAuthorized ContactR          _     = pure Authorized
-  isAuthorized AboutR            False = pure Authorized
-  isAuthorized PrivacyR          False = pure Authorized
-  isAuthorized HealthCheckR      False = pure Authorized
+  isAuthorized FaviconR False = pure Authorized
+  isAuthorized RobotsR False = pure Authorized
+  isAuthorized HomeR False = pure Authorized
+  isAuthorized FeedR False = pure Authorized
+  isAuthorized (BlogOldR _) False = pure Authorized
+  isAuthorized BlogHomeR False = pure Authorized
+  isAuthorized BlogR {} False = pure Authorized
+  isAuthorized ProjectsR False = pure Authorized
+  isAuthorized OldProjectsR False = pure Authorized
+  isAuthorized ContactR _ = pure Authorized
+  isAuthorized AboutR False = pure Authorized
+  isAuthorized PrivacyR False = pure Authorized
+  isAuthorized HealthCheckR False = pure Authorized
   isAuthorized (UploadFileR _ _) False = pure Authorized
-  isAuthorized (StaticR _      ) False = pure Authorized
-  isAuthorized (AuthR   _      ) _     = pure Authorized
-  isAuthorized _                 _     = isAdmin
+  isAuthorized (StaticR _) False = pure Authorized
+  isAuthorized (AuthR _) _ = pure Authorized
+  isAuthorized _ _ = isAdmin
 
 isAdmin :: Handler AuthResult
 isAdmin = do
-  mu   <- maybeAuthId
+  mu <- maybeAuthId
   site <- getYesod
   let admin = adminGoogleId $ appSettings site
 
   pure $ case mu of
-    Nothing     -> AuthenticationRequired
-    Just authId -> if authId == admin
-      then Authorized
-      else Unauthorized "You do not have admin rights on this site"
+    Nothing -> AuthenticationRequired
+    Just authId ->
+      if authId == admin
+        then Authorized
+        else Unauthorized "You do not have admin rights on this site"
 
 -- How to run database actions.
 instance YesodPersist App where
@@ -194,9 +204,9 @@ instance YesodPersistRunner App where
   getDBRunner = defaultGetDBRunner appConnPool
 
 instance YesodReCaptcha App where
-  reCaptchaSiteKey   = recaptchaSiteKey . appSettings <$> getYesod
+  reCaptchaSiteKey = recaptchaSiteKey . appSettings <$> getYesod
   reCaptchaSecretKey = recaptchaSecretKey . appSettings <$> getYesod
-  reCaptchaLanguage  = pure Nothing
+  reCaptchaLanguage = pure Nothing
 
 instance YesodAuth App where
   type AuthId App = Text
@@ -205,18 +215,18 @@ instance YesodAuth App where
   logoutDest _ = HomeR
   authPlugins master =
     [oauth2GoogleScoped ["email", "profile"] clientId clientSecret] <> dummy
-   where
-    clientId     = googleClientId $ appSettings master
-    clientSecret = googleClientSecret $ appSettings master
-    dummy        = [ authDummy | appAuthDummyLogin $ appSettings master ]
+    where
+      clientId = googleClientId $ appSettings master
+      clientSecret = googleClientSecret $ appSettings master
+      dummy = [authDummy | appAuthDummyLogin $ appSettings master]
 
   authHttpManager = appHttpManager <$> getYesod
-  maybeAuthId     = lookupSession "_ID"
-  loginHandler    = do
+  maybeAuthId = lookupSession "_ID"
+  loginHandler = do
     ma <- maybeAuthId
     when (isJust ma) . redirect $ HomeR
     plugins <- authPlugins <$> getYesod
-    rtp     <- getRouteToParent
+    rtp <- getRouteToParent
 
     authLayout $ do
       setTitle "Administrator login"

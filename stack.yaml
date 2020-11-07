@@ -1,5 +1,5 @@
 packages:
-- '.'
-extra-deps: [yesod-auth-oauth2-0.6.1.2, hoauth2-1.8.9, yesod-recaptcha2-1.0.0]
-resolver: lts-16.8
+  - "."
+extra-deps: [yesod-auth-oauth2-0.6.1.5, hoauth2-1.14.0]
+resolver: lts-16.20
 compiler: ghc-8.8.4

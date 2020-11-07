@@ -5,29 +5,22 @@
 
 packages:
 - completed:
-    hackage: yesod-auth-oauth2-0.6.1.2@sha256:181c757c8ba0f57c23119414db90e1859271bfeb85667d88a99746001c064aba,2891
+    hackage: yesod-auth-oauth2-0.6.1.5@sha256:bc65e697ae622b80024ca22a7b9270bf64a8c96be8f6ac1d09ed3a1d1cbbde6e,2950
     pantry-tree:
-      size: 1763
-      sha256: d6af8eabecd6a710c3c55003f7192216e8215bc738640cc29ee10046149aee9c
+      size: 1844
+      sha256: 314407a32db4ef4a0bed6991f2b3a4ac9d4636984c5449d9e64b30c6b7961a46
   original:
-    hackage: yesod-auth-oauth2-0.6.1.2
+    hackage: yesod-auth-oauth2-0.6.1.5
 - completed:
-    hackage: hoauth2-1.8.9@sha256:63929253f6cdeb096a369980d2acf0d7eedd0c98ac46f962f717c56b724069a4,5734
+    hackage: hoauth2-1.14.0@sha256:fcb4284fc78950c91d5b548317c51bd99a5ced84f4bb9e6153624b5783e4215f,5628
     pantry-tree:
-      size: 1986
-      sha256: 1c2901e88e82128b1e7f46e4b58eaeec779a630f0e30eb8bc226cb8ebb521bf8
+      size: 2046
+      sha256: f25e2c2c101312196159dad5a3e2a4c8f549ed2d036d9566b66786d758db7dba
   original:
-    hackage: hoauth2-1.8.9
-- completed:
-    hackage: yesod-recaptcha2-1.0.0@sha256:ebea8f043a7660fd9e19065a9f53796bdd3c3183c457e9c0a5a9feab48ff8c4c,1231
-    pantry-tree:
-      size: 272
-      sha256: 298a4b70ff610ce459c5119ba29970180ad6ced271a8001f28302724b27e022b
-  original:
-    hackage: yesod-recaptcha2-1.0.0
+    hackage: hoauth2-1.14.0
 snapshots:
 - completed:
-    size: 532379
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/16/8.yaml
-    sha256: 2ad3210d2ad35f3176005d68369a18e4d984517bfaa2caade76f28ed0b2e0521
-  original: lts-16.8
+    size: 532177
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/16/20.yaml
+    sha256: 0e14ba5603f01e8496e8984fd84b545a012ca723f51a098c6c9d3694e404dc6d
+  original: lts-16.20

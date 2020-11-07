@@ -1,80 +1,81 @@
-name:    callumscode2
-version: "0.2.0"
+name: callumscode2
+version: "0.2.1"
 
 dependencies:
-- aeson
-- amazonka
-- amazonka-ses
-- base
-- blaze-html
-- blaze-markup
-- bytestring
-- case-insensitive
-- classy-prelude
-- classy-prelude-conduit
-- classy-prelude-yesod
-- cmark
-- conduit
-- containers
-- data-default
-- directory
-- fast-logger
-- file-embed
-- foreign-store
-- hjsmin
-- http-client-tls
-- http-conduit
-- lens
-- monad-control
-- monad-logger
-- persistent
-- persistent-sqlite
-- persistent-template
-- safe
-- shakespeare
-- tagsoup
-- template-haskell
-- text
-- time
-- unordered-containers
-- vector
-- wai
-- wai-extra
-- wai-logger
-- warp
-- yaml
-- yesod
-- yesod-auth
-- yesod-auth-oauth2
-- yesod-core
-- yesod-form
-- yesod-newsfeed
-- yesod-recaptcha2
-- yesod-static
+  - aeson
+  - amazonka
+  - amazonka-ses
+  - base
+  - blaze-html
+  - blaze-markup
+  - bytestring
+  - case-insensitive
+  - classy-prelude
+  - classy-prelude-conduit
+  - classy-prelude-yesod
+  - cmark
+  - conduit
+  - containers
+  - data-default
+  - directory
+  - distributive
+  - fast-logger
+  - file-embed
+  - foreign-store
+  - hjsmin
+  - http-client-tls
+  - http-conduit
+  - lens
+  - monad-control
+  - monad-logger
+  - persistent
+  - persistent-sqlite
+  - persistent-template
+  - safe
+  - shakespeare
+  - tagsoup
+  - template-haskell
+  - text
+  - time
+  - unordered-containers
+  - vector
+  - wai
+  - wai-extra
+  - wai-logger
+  - warp
+  - yaml
+  - yesod
+  - yesod-auth
+  - yesod-auth-oauth2
+  - yesod-core
+  - yesod-form
+  - yesod-newsfeed
+  - yesod-recaptcha2
+  - yesod-static
 
 ghc-options:
-- -Wall
-- -Wcompat
-- -Wincomplete-uni-patterns
-- -Wincomplete-record-updates
-- -Wredundant-constraints
-- -Wpartial-fields
+  - -Wall
+  - -Wcompat
+  - -Wincomplete-uni-patterns
+  - -Wincomplete-record-updates
+  - -Wredundant-constraints
+  - -Wpartial-fields
 
 # The library contains all of our application code. The executable
 # defined below is just a thin wrapper.
 library:
   source-dirs: src
   when:
-  - condition: (flag(dev)) || (flag(library-only))
-    then:
-      ghc-options:
-      - -Wall
-      - -O0
-      cpp-options: -DDEVELOPMENT
-    else:
-      ghc-options:
-      - -Wall
-      - -O2
+    - condition: (flag(dev)) || (flag(library-only))
+      then:
+        ghc-options:
+          - -Wall
+          - -O0
+        cpp-options: -DDEVELOPMENT
+      else:
+        ghc-options:
+          - -Wall
+          - -O2
 
 # Runnable executable for our application
 executables:
@@ -82,14 +83,14 @@ executables:
     main: main.hs
     source-dirs: app
     ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N2
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N2
     dependencies:
-    - callumscode2
+      - callumscode2
     when:
-    - condition: flag(library-only)
-      buildable: false
+      - condition: flag(library-only)
+        buildable: false
 
 # Define flags used by "yesod devel" to make compilation faster
 flags:

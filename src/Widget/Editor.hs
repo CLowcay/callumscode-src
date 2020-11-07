@@ -1,15 +1,15 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module Widget.Editor
-  ( editorWidget
+  ( editorWidget,
   )
 where
 
-import           Import
+import Import
 
 editorWidget :: Maybe (Route App) -> Bool -> WidgetFor App ()
 editorWidget mDoneRoute isNewPage = do
@@ -20,7 +20,8 @@ editorWidget mDoneRoute isNewPage = do
   addStylesheet $ StaticR css_medium_theme_css
   addScript $ StaticR js_editor_js
 
-  toWidgetBody [hamlet|
+  toWidgetBody
+    [hamlet|
     <div .admin-buttons>
       <button #save .button-control disabled=true>
         Saved
@@ -29,7 +30,8 @@ editorWidget mDoneRoute isNewPage = do
           Done
   |]
 
-  toWidgetBody [julius|
+  toWidgetBody
+    [julius|
     const languages = [
       'bash',
       'c',
@@ -78,10 +80,11 @@ editorWidget mDoneRoute isNewPage = do
       ^{saveButtonWidget}
     });
   |]
-
- where
-  saveButtonWidget = if isNewPage
-    then [julius|
+  where
+    saveButtonWidget =
+      if isNewPage
+        then
+          [julius|
         save.addEventListener('click', () =>{
           const title = document.createElement('input');
           title.name = 'title';
@@ -104,7 +107,8 @@ editorWidget mDoneRoute isNewPage = do
           form.submit();
         });
       |]
-    else [julius|
+        else
+          [julius|
         save.addEventListener('click', async () => {
           removeLanguageDropdowns();
           const body = new FormData();

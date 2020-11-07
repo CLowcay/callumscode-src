@@ -1,14 +1,16 @@
 {-# LANGUAGE NoImplicitPrelude #-}
+
 module Common
-  ( mkURL
-  , adjustURL
+  ( mkURL,
+    adjustURL,
   )
 where
 
-import           ClassyPrelude.Yesod     hiding ( toLower )
-import           Data.Char                      ( isSpace
-                                                , toLower
-                                                )
+import ClassyPrelude.Yesod hiding (toLower)
+import Data.Char
+  ( isSpace,
+    toLower,
+  )
 
 mkURL :: Text -> Text
 mkURL =
@@ -21,7 +23,8 @@ mkURL =
 
 adjustURL :: Text -> Text -> Text
 adjustURL lastURL thisURL = thisURL <> pad 4 '0' (add1 $ suffix 4 lastURL)
-  where add1 = tshow . (+ 1) . fromMaybe (0 :: Int) . readMay
+  where
+    add1 = tshow . (+ 1) . fromMaybe (0 :: Int) . readMay
 
 suffix :: Int -> Text -> Text
 suffix w = reverse . take w . reverse
